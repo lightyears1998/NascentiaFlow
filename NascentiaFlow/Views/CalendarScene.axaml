@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="NascentiaFlow.Views.CalendarScene">
+    <ScrollViewer>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button>Prev</Button>
+                <DatePicker IsVisible="True"></DatePicker>
+                <Button>Next</Button>
+            </StackPanel>
+            <CheckBox>Show Calendar</CheckBox>
+            <Calendar IsVisible="False"/>
+            <Label>日记内容</Label>
+            <Label>活动内容</Label>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

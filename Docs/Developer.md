@@ -1,5 +1,19 @@
 # Developer
 
+## 目标平台
+
+- Windows 
+- Android
+- Linux 
+  - Windows Subsystem Linux
+
+## 技术栈
+
+- .NET 10
+  - EF Core
+- Avalonia 12
+- sqlite
+
 ## 开发依赖
 
 ```shell

@@ -1,0 +1,17 @@
+using Avalonia.ReactiveUI;
+using NascentiaFlow.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
+
+namespace NascentiaFlow.Views;
+
+public partial class DateTimeInfoView : ReactiveUserControl<DateTimeInfoViewModel>
+{
+    public DateTimeInfoView()
+    {
+        InitializeComponent();
+        DataContext ??= new DateTimeInfoViewModel();
+
+        this.WhenActivated(d => {});
+    }
+}
