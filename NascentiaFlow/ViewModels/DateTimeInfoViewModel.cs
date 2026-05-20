@@ -1,5 +1,6 @@
-using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
+using ReactiveUI.Avalonia;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 
@@ -12,7 +13,7 @@ public partial class DateTimeInfoViewModel : ViewModelBase, IActivatableViewMode
     [Reactive]
     private string _info = GetDateTimeInfo();
 
-    private static string GetDateTimeInfo() => DateTime.Now.ToString("yyyyÄêMMÔÂddÈÕ HH:mm:ss");
+    private static string GetDateTimeInfo() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
     
     public DateTimeInfoViewModel()
     {
@@ -20,7 +21,7 @@ public partial class DateTimeInfoViewModel : ViewModelBase, IActivatableViewMode
         {
             Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(200))
                 .Select(_ => GetDateTimeInfo())
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(info => Info = info)
                 .DisposeWith(disposables);
         });

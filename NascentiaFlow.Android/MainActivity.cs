@@ -1,23 +1,34 @@
+using System;
 using Android.App;
 using Android.Content.PM;
+using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 
 namespace NascentiaFlow.Android;
 
 [Activity(
-    Label = "NascentiaFlow.Android",
+    Label = "@string/app_name",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
-public class MainActivity : AvaloniaMainActivity<App>
+public class MainActivity : AvaloniaMainActivity
 {
+}
+
+[Application]
+public class AndroidApp : AvaloniaAndroidApplication<App>
+{
+    protected AndroidApp(IntPtr javaReference, JniHandleOwnership transfer)
+        : base(javaReference, transfer)
+    {
+    }
+
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         return base.CustomizeAppBuilder(builder)
-            .WithInterFont()
-            .UseReactiveUI();
+            .UseReactiveUI(_ => { });
     }
 }

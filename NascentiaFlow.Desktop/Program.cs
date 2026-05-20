@@ -1,6 +1,6 @@
 using System;
 using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 
 namespace NascentiaFlow.Desktop;
 
@@ -17,7 +17,6 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
-            .UseReactiveUI()
+            .UseReactiveUI(_ => {})
             .LogToTrace();
 }
