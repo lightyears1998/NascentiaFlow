@@ -12,10 +12,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.0" />
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\NascentiaFlow\NascentiaFlow.csproj" />
