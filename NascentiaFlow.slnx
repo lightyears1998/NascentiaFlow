@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="NascentiaFlow.Android/NascentiaFlow.Android.csproj" />
+  <Project Path="NascentiaFlow.Browser/NascentiaFlow.Browser.csproj" />
+  <Project Path="NascentiaFlow.Desktop/NascentiaFlow.Desktop.csproj" />
+  <Project Path="NascentiaFlow.Server/NascentiaFlow.Server.csproj" />
+  <Project Path="NascentiaFlow.Tests/NascentiaFlow.Tests.csproj" />
+  <Project Path="NascentiaFlow/NascentiaFlow.csproj" />
+</Solution>
