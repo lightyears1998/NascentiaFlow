@@ -68,7 +68,9 @@ public partial class App : Application
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = Provider.GetRequiredService<MainWindowViewModel>(),
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Width = Settings.WindowWidth,
+                    Height = Settings.WindowHeight
                 };
                 break;
 

@@ -8,8 +8,6 @@
         x:Class="NascentiaFlow.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="{Binding Title}"
-        Width="600"
-        Height="360"
         x:DataType="vm:MainWindowViewModel">
 
         <views:MainView />

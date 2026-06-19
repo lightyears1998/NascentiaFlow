@@ -1,5 +1,6 @@
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using Avalonia.Controls;
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
 using ReactiveUI;
@@ -17,5 +18,14 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             TopWindows.MainWindow = this;
             Disposable.Create(() => {}).DisposeWith(disposables);
         });
+
+        Closing += OnClosing;
+    }
+
+    private void OnClosing(object? sender, WindowClosingEventArgs e)
+    {
+        AppSettingsManager.CurrentSettings.WindowWidth = Width;
+        AppSettingsManager.CurrentSettings.WindowHeight = Height;
+        AppSettingsManager.SaveSettingsToFile();
     }
 }

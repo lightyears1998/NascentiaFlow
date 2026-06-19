@@ -10,6 +10,10 @@ public record AppSettings
     public string AppRoamingDataDir { set; get; } = string.Empty;
 
     public bool DisplayTimezoneInDatetimeString { get; set; } = false;
+
+    public double WindowWidth { get; set; } = 600;
+
+    public double WindowHeight { get; set; } = 360;
 }
 
 public static class AppSettingsManager
