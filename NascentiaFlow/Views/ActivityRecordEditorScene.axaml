@@ -13,13 +13,13 @@
         <Label Content="Started At" />
         <StackPanel Orientation="Horizontal" Spacing="4">
             <CalendarDatePicker SelectedDate="{Binding ActivityStartedAt}" />
-            <TimePicker SelectedTime="{Binding ActivityStartedAtTime}" />
+            <TimePicker SelectedTime="{Binding ActivityStartedAtTime}" UseSeconds="True" />
         </StackPanel>
 
         <Label Content="Ended At" />
         <StackPanel Orientation="Horizontal" Spacing="4">
             <CalendarDatePicker SelectedDate="{Binding ActivityEndedAt}" />
-            <TimePicker SelectedTime="{Binding ActivityEndedAtTime}" />
+            <TimePicker SelectedTime="{Binding ActivityEndedAtTime}" UseSeconds="True" />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Spacing="4">
