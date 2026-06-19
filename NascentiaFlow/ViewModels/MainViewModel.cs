@@ -10,17 +10,12 @@ namespace NascentiaFlow.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    public ObservableCollection<ISceneModel> Scenes { get; } = [];
-
-    private ObservableAsPropertyHelper<ISceneModel> _currentScene;
-    public ISceneModel CurrentScene => _currentScene.Value;
-
-    public ReactiveCommand<ISceneModel, Unit> RequestSwitchSceneCommand { get; }
+    private readonly ObservableAsPropertyHelper<ISceneModel> _currentScene;
 
     public MainViewModel(HomeSceneModel homeScene)
     {
         Scenes.Add(homeScene);
-        
+
         _currentScene = Observable.FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                 handler => (_, args) => handler(args),
                 handler => Scenes.CollectionChanged += handler,
@@ -30,6 +25,12 @@ public class MainViewModel : ViewModelBase
 
         RequestSwitchSceneCommand = ReactiveCommand.Create<ISceneModel>(SwitchToScene);
     }
+
+    public ObservableCollection<ISceneModel> Scenes { get; } = [];
+
+    public ISceneModel CurrentScene => _currentScene.Value;
+
+    public ReactiveCommand<ISceneModel, Unit> RequestSwitchSceneCommand { get; }
 
     public void PushScene(ISceneModel vm)
     {
