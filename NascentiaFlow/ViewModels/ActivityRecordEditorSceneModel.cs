@@ -14,16 +14,16 @@ public partial class ActivityRecordEditorSceneModel : SceneModelBase
     private string _activityDescription = string.Empty;
 
     [Reactive]
-    private DateTime? _activityStartedAt;
+    private DateTime? _activityStartedAt = DateTime.Today;
 
     [Reactive]
-    private TimeSpan? _activityStartedAtTime;
+    private TimeSpan? _activityStartedAtTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
 
     [Reactive]
-    private DateTime? _activityEndedAt;
+    private DateTime? _activityEndedAt = DateTime.Today;
 
     [Reactive]
-    private TimeSpan? _activityEndedAtTime;
+    private TimeSpan? _activityEndedAtTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
 
     private Activity? _model;
 
