@@ -71,9 +71,4 @@ public partial class HomeScene : ReactiveUserControl<HomeSceneModel>
     {
         MainView.Current?.NavigateTo(new ActivityRecordsSceneModel());
     }
-
-    private void OpenHealthSceneButton_OnClick(object? sender, RoutedEventArgs e)
-    {
-        MainView.Current?.NavigateTo(new HealthSceneModel());
-    }
 }

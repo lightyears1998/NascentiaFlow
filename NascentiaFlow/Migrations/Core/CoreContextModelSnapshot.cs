@@ -78,31 +78,6 @@ namespace NascentiaFlow.Migrations.Core
                     b.ToTable("ActivityTypes");
                 });
 
-            modelBuilder.Entity("NascentiaFlow.Entities.BodyWeight", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("EditionId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("EditionTimestamp")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<float>("Weight")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BodyWeights");
-                });
-
             modelBuilder.Entity("NascentiaFlow.Entities.Diary", b =>
                 {
                     b.Property<Guid>("Id")

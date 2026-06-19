@@ -69,7 +69,6 @@
             <TabItem Name="ShortcutsTabItem" Header="Shortcuts">
                 <StackPanel>
                     <Button Name="OpenChronicleSceneButton" Click="OpenChronicleSceneButton_OnClick">Chronicle</Button>
-                    <Button Name="OpenHealthSceneButton" Click="OpenHealthSceneButton_OnClick">Health</Button>
                     <Button Name="OpenActivityRecordsSceneButton" Click="OpenActivityRecordsSceneButton_OnClick">Activity Records</Button>
                 </StackPanel>
             </TabItem>
