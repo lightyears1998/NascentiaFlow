@@ -14,16 +14,16 @@ public partial class ActivityRecordEditorSceneModel : SceneModelBase
     private string _activityDescription = string.Empty;
 
     [Reactive]
-    private DateTime? _activityStartedAt = DateTime.Today;
+    private DateTime _activityStartedAt = DateTime.Today;
 
     [Reactive]
-    private TimeSpan? _activityStartedAtTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
+    private TimeSpan _activityStartedAtTime = new(DateTime.Now.Hour, DateTime.Now.Minute, 0);
 
     [Reactive]
-    private DateTime? _activityEndedAt = DateTime.Today;
+    private DateTime _activityEndedAt = DateTime.Today;
 
     [Reactive]
-    private TimeSpan? _activityEndedAtTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
+    private TimeSpan _activityEndedAtTime = new(DateTime.Now.Hour, DateTime.Now.Minute, 0);
 
     private Activity? _model;
 
@@ -65,17 +65,11 @@ public partial class ActivityRecordEditorSceneModel : SceneModelBase
             _model ??= new Activity();
             _model.Description = _activityDescription;
 
-            if (_activityStartedAt.HasValue && _activityStartedAtTime.HasValue)
-            {
-                var dt = _activityStartedAt.Value.Date.Add(_activityStartedAtTime.Value);
-                _model.StartedAt = Instant.FromDateTimeUtc(dt.ToUniversalTime());
-            }
+            var dateTimeStartedAt = _activityStartedAt.Date.Add(_activityStartedAtTime);
+            _model.StartedAt = Instant.FromDateTimeUtc(dateTimeStartedAt.ToUniversalTime());
 
-            if (_activityEndedAt.HasValue && _activityEndedAtTime.HasValue)
-            {
-                var dt = _activityEndedAt.Value.Date.Add(_activityEndedAtTime.Value);
-                _model.EndedAt = Instant.FromDateTimeUtc(dt.ToUniversalTime());
-            }
+            var dateTimeEndedAt = _activityEndedAt.Date.Add(_activityEndedAtTime);
+            _model.EndedAt = Instant.FromDateTimeUtc(dateTimeEndedAt.ToUniversalTime());
         });
 
         DiscardEdition = ReactiveCommand.Create(() => { });

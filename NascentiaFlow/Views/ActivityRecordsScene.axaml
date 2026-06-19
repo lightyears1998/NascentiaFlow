@@ -7,15 +7,35 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="NascentiaFlow.Views.ActivityRecordsScene"
              x:DataType="vm:ActivityRecordsSceneModel">
-    <DataGrid Name="ActivityDataGrid"
-              ItemsSource="{Binding Activities}"
-              IsReadOnly="True"
-              CanUserSortColumns="True"
-              SelectionMode="Single">
-        <DataGrid.Columns>
-            <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
-            <DataGridTextColumn Header="Started At" Binding="{Binding StartedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}" />
-            <DataGridTextColumn Header="Ended At" Binding="{Binding EndedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}" />
-        </DataGrid.Columns>
-    </DataGrid>
+    <Grid>
+        <Grid.RowDefinitions>Auto,*</Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4">
+            <Label Content="Date Selection" VerticalAlignment="Center" />
+            <Button Command="{Binding SelectPreviousDayCommand}">Prev</Button>
+            <CalendarDatePicker SelectedDate="{Binding FilterDate}" />
+            <Button Command="{Binding SelectNextDayCommand}">Next</Button>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  Name="ActivityDataGrid"
+                  ItemsSource="{Binding Activities}"
+                  SelectedItem="{Binding SelectedActivity}"
+                  IsReadOnly="True"
+                  CanUserSortColumns="True"
+                  CanUserResizeColumns="True"
+                  SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Description"
+                                    Binding="{Binding Description}"
+                                    SortMemberPath="Description"/>
+                <DataGridTextColumn Header="Started At"
+                                    Binding="{Binding StartedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}"
+                                    SortMemberPath="StartedAt"/>
+                <DataGridTextColumn Header="Ended At"
+                                    Binding="{Binding EndedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}"
+                                    SortMemberPath="EndedAt"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </UserControl>

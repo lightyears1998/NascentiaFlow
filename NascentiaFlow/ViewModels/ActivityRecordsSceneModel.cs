@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using DynamicData;
 using NascentiaFlow.Entities;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 
@@ -19,6 +20,9 @@ public partial class ActivityRecordsSceneModel : SceneModelBase
     [Reactive]
     private Activity? _selectedActivity;
 
+    [Reactive]
+    private DateTime _filterDate = DateTime.Now;
+
     private CoreContext _coreContext;
 
     public IObservable<bool> AnyItemSelected { get; }
@@ -31,12 +35,19 @@ public partial class ActivityRecordsSceneModel : SceneModelBase
 
     public ReactiveCommand<Unit, Unit> RemoveSelectedItemCommand { get; }
 
+    public ReactiveCommand<Unit, Unit> SelectPreviousDayCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> SelectNextDayCommand { get;  }
+
     public ActivityRecordsSceneModel()
     {
         _coreContext = new CoreContext();
 
         AnyItemSelected = this.WhenAnyValue(x => x.SelectedActivity)
             .Select(x => x != null);
+
+        this.WhenAnyValue(x => x.FilterDate)
+            .Subscribe(_ => ReloadActivities());
 
         AddActivityCommand = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -67,6 +78,31 @@ public partial class ActivityRecordsSceneModel : SceneModelBase
             _coreContext.SaveChanges();
         }, AnyItemSelected);
 
-        Activities.AddRange(_coreContext.Activities.OrderByDescending(x => x.StartedAt).ToList());
+        SelectPreviousDayCommand = ReactiveCommand.Create(() =>
+        {
+            FilterDate = FilterDate.AddDays(-1);
+        });
+
+        SelectNextDayCommand = ReactiveCommand.Create(() =>
+        {
+            FilterDate = FilterDate.AddDays(1);
+        });
+
+        ReloadActivities();
+    }
+
+    private void ReloadActivities()
+    {
+        Activities.Clear();
+
+        var query = _coreContext.Activities.AsQueryable();
+
+        var localStart = FilterDate.Date;
+        var localEnd = localStart.AddDays(1);
+        var startInstant = Instant.FromDateTimeUtc(localStart.ToUniversalTime());
+        var endInstant = Instant.FromDateTimeUtc(localEnd.ToUniversalTime());
+        query = query.Where(x => x.EndedAt >= startInstant && x.StartedAt < endInstant);
+
+        Activities.AddRange(query.OrderBy(x => x.StartedAt).ToList());
     }
 }
