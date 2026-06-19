@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.x
-        workloads: 'wasm-tools, android'
+    - run: dotnet workload install android wasm-tools
     - uses: actions/cache@v5
       with:
         path: ~/.nuget/packages
