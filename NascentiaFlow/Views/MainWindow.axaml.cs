@@ -3,7 +3,6 @@ using System.Reactive.Disposables.Fluent;
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
 using ReactiveUI;
-using ReactiveUI.Avalonia;
 
 namespace NascentiaFlow.Views;
 

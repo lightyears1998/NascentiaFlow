@@ -17,7 +17,7 @@
 ## 开发依赖
 
 ```shell
-dotnet workload install android wasm-tools
+dotnet workload restore # android
 ```
 
 ``` shell
