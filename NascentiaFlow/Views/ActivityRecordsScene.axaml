@@ -2,7 +2,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NascentiaFlow.ViewModels"
+             xmlns:views="clr-namespace:NascentiaFlow.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="NascentiaFlow.Views.ActivityRecordsScene">
-    Welcome to Avalonia!
+             x:Class="NascentiaFlow.Views.ActivityRecordsScene"
+             x:DataType="vm:ActivityRecordsSceneModel">
+    <DataGrid Name="ActivityDataGrid"
+              ItemsSource="{Binding Activities}"
+              IsReadOnly="True"
+              CanUserSortColumns="True"
+              SelectionMode="Single">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+            <DataGridTextColumn Header="Started At" Binding="{Binding StartedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}" />
+            <DataGridTextColumn Header="Ended At" Binding="{Binding EndedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}" />
+        </DataGrid.Columns>
+    </DataGrid>
 </UserControl>

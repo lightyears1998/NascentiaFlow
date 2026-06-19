@@ -25,6 +25,7 @@ static class ServiceCollectionExtensions
         collection.AddTransient<HomeSceneModel>();
         collection.AddTransient<SettingsSceneModel>();
         collection.AddTransient<SourceSceneModel>();
+        collection.AddTransient<ActivityRecordsSceneModel>();
 
         // Views
         collection.AddTransient<MainWindow>();

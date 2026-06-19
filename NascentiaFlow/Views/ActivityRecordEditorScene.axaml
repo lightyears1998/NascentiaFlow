@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NascentiaFlow.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="NascentiaFlow.Views.ActivityRecordEditorScene"
+             x:DataType="vm:ActivityRecordEditorSceneModel">
+    <StackPanel Spacing="4">
+        <Label Content="Description" />
+        <TextBox Text="{Binding ActivityDescription}" />
+
+        <Label Content="Started At" />
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <CalendarDatePicker SelectedDate="{Binding ActivityStartedAt}" />
+            <TimePicker SelectedTime="{Binding ActivityStartedAtTime}" />
+        </StackPanel>
+
+        <Label Content="Ended At" />
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <CalendarDatePicker SelectedDate="{Binding ActivityEndedAt}" />
+            <TimePicker SelectedTime="{Binding ActivityEndedAtTime}" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <Button Command="{Binding ConfirmEdition}">Confirm</Button>
+            <Button Command="{Binding DiscardEdition}">Cancel</Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

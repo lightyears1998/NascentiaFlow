@@ -8,6 +8,8 @@ public class CoreContext : DbContext
     public DbSet<Diary> Diaries { set; get; }
     public DbSet<Source> Sources { set; get; }
     public DbSet<BodyWeight> BodyWeights { set; get; }
+    public DbSet<Activity> Activities { set; get; }
+    public DbSet<ActivityType> ActivityTypes { set; get; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
