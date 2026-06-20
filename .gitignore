@@ -455,3 +455,7 @@ $RECYCLE.BIN/
 
 # TRAE
 .trae/
+
+# Local documents and enviroments
+*.local.md
+*.local.env
