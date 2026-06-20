@@ -4,6 +4,8 @@ namespace NascentiaFlow.Entities;
 
 public class Activity : EntityBase
 {
+    public string Name { get; set; } = string.Empty;
+
     public Instant StartedAt { set; get; }
 
     public Instant EndedAt { set; get; }
