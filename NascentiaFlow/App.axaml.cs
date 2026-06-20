@@ -11,48 +11,29 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace NascentiaFlow;
 
-static class ServiceCollectionExtensions
-{
-    public static void AddCommonServices(this IServiceCollection collection)
-    {
-        // Database contexts
-        collection.AddTransient<CoreContext>();
-        collection.AddTransient<EditionContext>();
-        
-        // View models
-        collection.AddTransient<MainWindowViewModel>();
-        collection.AddTransient<MainViewModel>();
-        collection.AddTransient<HomeSceneModel>();
-        collection.AddTransient<SettingsSceneModel>();
-        collection.AddTransient<SourceSceneModel>();
-        collection.AddTransient<ActivityRecordsSceneModel>();
-
-        // Views
-        collection.AddTransient<MainWindow>();
-        collection.AddTransient<MainView>();
-    }
-}
-
-public partial class App : Application
+public class App : Application
 {
     public App()
     {
         var collection = new ServiceCollection();
-        collection.AddCommonServices();
+        collection.AddServices();
+        collection.AddDbContexts();
+        collection.AddViewModels();
+        collection.AddViews();
 
         Provider = collection.BuildServiceProvider();
     }
 
     public new static App Current => (App)(Application.Current!);
 
+    public ServiceProvider Provider { get; }
+
+    public AppSettings Settings => AppSettingsManager.CurrentSettings;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
-
-    public ServiceProvider Provider { get; protected set; }
-
-    public AppSettings Settings => AppSettingsManager.CurrentSettings;
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -141,12 +122,12 @@ public partial class App : Application
             }
         }
     }
-    
+
     private void EnsureLocalDataDirs()
     {
         EnsureDirs([ Constants.AppLocalDataDir ]);
     }
-    
+
     private void EnsureRoamingDataDirs()
     {
         EnsureDirs([
