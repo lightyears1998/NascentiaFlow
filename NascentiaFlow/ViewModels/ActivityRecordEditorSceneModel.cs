@@ -52,13 +52,14 @@ public partial class ActivityRecordEditorSceneModel : SceneModelBase
                     ActivityName = value.Name;
                     ActivityDescription = value.Description;
 
+                    // TODO 应该使用 NodaTime 进行转换
                     var startedAtLocal = value.StartedAt.ToDateTimeUtc().ToLocalTime();
                     ActivityStartedAt = startedAtLocal.Date;
-                    ActivityStartedAtTime = new TimeSpan(startedAtLocal.Hour, startedAtLocal.Minute, 0);
+                    ActivityStartedAtTime = new TimeSpan(startedAtLocal.Hour, startedAtLocal.Minute, startedAtLocal.Second);
 
                     var endedAtLocal = value.EndedAt.ToDateTimeUtc().ToLocalTime();
                     ActivityEndedAt = endedAtLocal.Date;
-                    ActivityEndedAtTime = new TimeSpan(endedAtLocal.Hour, endedAtLocal.Minute, 0);
+                    ActivityEndedAtTime = new TimeSpan(endedAtLocal.Hour, endedAtLocal.Minute, endedAtLocal.Second);
                 }).DisposeWith(d);
         });
 
