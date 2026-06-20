@@ -1,4 +1,5 @@
 using System.Reactive;
+using System.Reactive.Disposables.Fluent;
 using NascentiaFlow.Entities;
 using NodaTime;
 using ReactiveUI;
@@ -11,43 +12,25 @@ public partial class ActivityRecordEditorSceneModel : SceneModelBase
     public override string Name => "Activity Record Editor";
 
     [Reactive]
+    private string _activityName = string.Empty;
+
+    [Reactive]
     private string _activityDescription = string.Empty;
 
     [Reactive]
-    private DateTime? _activityStartedAt = DateTime.Today;
+    private DateTime _activityStartedAt = DateTime.Today;
 
     [Reactive]
-    private TimeSpan? _activityStartedAtTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
+    private TimeSpan _activityStartedAtTime = new(DateTime.Now.Hour, DateTime.Now.Minute,  DateTime.Now.Second);
 
     [Reactive]
-    private DateTime? _activityEndedAt = DateTime.Today;
+    private DateTime _activityEndedAt = DateTime.Today;
 
     [Reactive]
-    private TimeSpan? _activityEndedAtTime = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 0);
+    private TimeSpan _activityEndedAtTime = new(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
+    [Reactive]
     private Activity? _model;
-
-    public Activity? Model
-    {
-        get => _model;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _model, value);
-
-            if (value != null)
-            {
-                ActivityDescription = value.Description;
-
-                var startedAtLocal = value.StartedAt.ToDateTimeUtc().ToLocalTime();
-                ActivityStartedAt = startedAtLocal.Date;
-                ActivityStartedAtTime = new TimeSpan(startedAtLocal.Hour, startedAtLocal.Minute, 0);
-
-                var endedAtLocal = value.EndedAt.ToDateTimeUtc().ToLocalTime();
-                ActivityEndedAt = endedAtLocal.Date;
-                ActivityEndedAtTime = new TimeSpan(endedAtLocal.Hour, endedAtLocal.Minute, 0);
-            }
-        }
-    }
 
     public ReactiveCommand<Unit, Unit> ConfirmEdition { get; }
 
@@ -60,22 +43,36 @@ public partial class ActivityRecordEditorSceneModel : SceneModelBase
 
     public ActivityRecordEditorSceneModel()
     {
+        this.WhenActivated(d =>
+        {
+            this.WhenAnyValue(x => x.Model)
+                .WhereNotNull()
+                .Subscribe(value =>
+                {
+                    ActivityName = value.Name;
+                    ActivityDescription = value.Description;
+
+                    var startedAtLocal = value.StartedAt.ToDateTimeUtc().ToLocalTime();
+                    ActivityStartedAt = startedAtLocal.Date;
+                    ActivityStartedAtTime = new TimeSpan(startedAtLocal.Hour, startedAtLocal.Minute, 0);
+
+                    var endedAtLocal = value.EndedAt.ToDateTimeUtc().ToLocalTime();
+                    ActivityEndedAt = endedAtLocal.Date;
+                    ActivityEndedAtTime = new TimeSpan(endedAtLocal.Hour, endedAtLocal.Minute, 0);
+                }).DisposeWith(d);
+        });
+
         ConfirmEdition = ReactiveCommand.Create(() =>
         {
             _model ??= new Activity();
+            _model.Name = _activityName;
             _model.Description = _activityDescription;
 
-            if (_activityStartedAt.HasValue && _activityStartedAtTime.HasValue)
-            {
-                var dt = _activityStartedAt.Value.Date.Add(_activityStartedAtTime.Value);
-                _model.StartedAt = Instant.FromDateTimeUtc(dt.ToUniversalTime());
-            }
+            var startedAtLocal = _activityStartedAt.Date.Add(_activityStartedAtTime);
+            _model.StartedAt = Instant.FromDateTimeUtc(startedAtLocal.ToUniversalTime());
 
-            if (_activityEndedAt.HasValue && _activityEndedAtTime.HasValue)
-            {
-                var dt = _activityEndedAt.Value.Date.Add(_activityEndedAtTime.Value);
-                _model.EndedAt = Instant.FromDateTimeUtc(dt.ToUniversalTime());
-            }
+            var endedAtLocal = _activityEndedAt.Date.Add(_activityEndedAtTime);
+            _model.EndedAt = Instant.FromDateTimeUtc(endedAtLocal.ToUniversalTime());
         });
 
         DiscardEdition = ReactiveCommand.Create(() => { });

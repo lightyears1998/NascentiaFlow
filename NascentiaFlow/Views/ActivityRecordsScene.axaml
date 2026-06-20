@@ -26,15 +26,18 @@
                   CanUserResizeColumns="True"
                   SelectionMode="Single">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Description"
-                                    Binding="{Binding Description}"
-                                    SortMemberPath="Description"/>
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding Name}"
+                                    SortMemberPath="Name" />
                 <DataGridTextColumn Header="Started At"
                                     Binding="{Binding StartedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}"
-                                    SortMemberPath="StartedAt"/>
+                                    SortMemberPath="StartedAt" />
                 <DataGridTextColumn Header="Ended At"
                                     Binding="{Binding EndedAt, Mode=OneWay, Converter={StaticResource InstantToStringConverter}}"
-                                    SortMemberPath="EndedAt"/>
+                                    SortMemberPath="EndedAt" />
+                <DataGridTextColumn Header="Description"
+                                    Binding="{Binding Description}"
+                                    SortMemberPath="Description" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

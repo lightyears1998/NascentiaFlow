@@ -6,25 +6,33 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="NascentiaFlow.Views.ActivityRecordEditorScene"
              x:DataType="vm:ActivityRecordEditorSceneModel">
-    <StackPanel Spacing="4">
-        <Label Content="Description" />
-        <TextBox Text="{Binding ActivityDescription}" />
+    <ScrollViewer>
+        <StackPanel Spacing="4">
+            <Label Content="Name" />
+            <TextBox Text="{Binding ActivityName}" />
 
-        <Label Content="Started At" />
-        <StackPanel Orientation="Horizontal" Spacing="4">
-            <CalendarDatePicker SelectedDate="{Binding ActivityStartedAt}" />
-            <TimePicker SelectedTime="{Binding ActivityStartedAtTime}" UseSeconds="True" />
-        </StackPanel>
+            <Label Content="Started At" />
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <CalendarDatePicker SelectedDate="{Binding ActivityStartedAt}" />
+                <TimePicker SelectedTime="{Binding ActivityStartedAtTime}" UseSeconds="True" />
+            </StackPanel>
 
-        <Label Content="Ended At" />
-        <StackPanel Orientation="Horizontal" Spacing="4">
-            <CalendarDatePicker SelectedDate="{Binding ActivityEndedAt}" />
-            <TimePicker SelectedTime="{Binding ActivityEndedAtTime}" UseSeconds="True" />
-        </StackPanel>
+            <Label Content="Ended At" />
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <CalendarDatePicker SelectedDate="{Binding ActivityEndedAt}" />
+                <TimePicker SelectedTime="{Binding ActivityEndedAtTime}" UseSeconds="True" />
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Spacing="4">
-            <Button Command="{Binding ConfirmEdition}">Confirm</Button>
-            <Button Command="{Binding DiscardEdition}">Cancel</Button>
+            <Label Content="Description" />
+            <TextBox Text="{Binding ActivityDescription}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     MinHeight="100" />
+
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Command="{Binding ConfirmEdition}">Confirm</Button>
+                <Button Command="{Binding DiscardEdition}">Cancel</Button>
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

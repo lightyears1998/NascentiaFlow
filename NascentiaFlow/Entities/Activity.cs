@@ -6,9 +6,9 @@ public class Activity : EntityBase
 {
     public string Name { get; set; } = string.Empty;
 
-    public Instant StartedAt { set; get; }
+    public Instant StartedAt { set; get; } = SystemClock.Instance.GetCurrentInstant();
 
-    public Instant EndedAt { set; get; }
+    public Instant EndedAt { set; get; } = SystemClock.Instance.GetCurrentInstant();
 
     public string Description { set; get; } = string.Empty;
 
