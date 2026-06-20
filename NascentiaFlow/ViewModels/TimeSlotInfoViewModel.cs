@@ -9,10 +9,10 @@ public class TimeSlotInfoViewModel : ViewModelBase
 
     public TimeSlotInfoViewModel()
     {
-        var today = ChronicleService.GetToday().LocalDateTime.Date;
+        var today = DateTimeService.GetToday().LocalDateTime.Date;
         var weekYear = WeekYearRules.Iso.GetWeekYear(today);
         var week = WeekYearRules.Iso.GetWeekOfWeekYear(today);
 
-        TextInfo = $"{weekYear}ÄêµÚ{week}ÖÜ";
+        TextInfo = $"{weekYear}å¹´ç¬¬{week}å‘¨";
     }
 }
