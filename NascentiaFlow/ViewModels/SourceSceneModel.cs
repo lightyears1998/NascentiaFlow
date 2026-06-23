@@ -1,12 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using Avalonia.Data;
 using DynamicData;
 using NascentiaFlow.Entities;
-using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;

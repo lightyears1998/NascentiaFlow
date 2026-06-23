@@ -1,6 +1,5 @@
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 
 namespace NascentiaFlow.Views;

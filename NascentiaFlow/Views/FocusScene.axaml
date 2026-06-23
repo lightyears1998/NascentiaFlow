@@ -2,7 +2,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NascentiaFlow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="NascentiaFlow.Views.FocusScene">
-    Welcome to Avalonia!
+             x:Class="NascentiaFlow.Views.FocusScene"
+             x:DataType="vm:FocusSceneModel">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="8" Margin="16">
+            <Label Content="Activity Name" />
+            <TextBox Text="{Binding ActivityName}" />
+
+            <Label Content="Description" />
+            <TextBox Text="{Binding ActivityDescription}"
+                     AcceptsReturn="True"
+                     MinHeight="80" />
+
+            <Label Content="Expected Duration (minutes)" />
+            <NumericUpDown Value="{Binding ExpectedMinutes}"
+                          Minimum="1"
+                          Maximum="480" />
+
+            <Button Content="Start Focus"
+                    Command="{Binding StartFocusCommand}"
+                    HorizontalAlignment="Left"
+                    Margin="0,8,0,0" />
+        </StackPanel>
+    </Grid>
 </UserControl>

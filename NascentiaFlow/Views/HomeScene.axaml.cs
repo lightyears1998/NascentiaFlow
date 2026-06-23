@@ -1,7 +1,6 @@
 using Avalonia.Interactivity;
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
-using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
 
 namespace NascentiaFlow.Views;
 
