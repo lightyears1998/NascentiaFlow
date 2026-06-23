@@ -2,10 +2,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="NascentiaFlow.Views.FocusTimerView">
-    <StackPanel Orientation="Vertical">
-        <Label HorizontalAlignment="Right">Progress Bar</Label>
-        <Label Name="CounterLabel" PointerPressed="CounterLabel_OnPointerPressed">Counter</Label>
-    </StackPanel>
+             xmlns:vm="clr-namespace:NascentiaFlow.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="240" d:DesignHeight="100"
+             x:Class="NascentiaFlow.Views.FocusTimerView"
+             x:DataType="vm:FocusTimerWindowViewModel"
+             Background="Transparent">
+
+    <Grid Margin="8"
+          Background="Transparent"
+          PointerPressed="OnPointerPressed" >
+        <Grid.RowDefinitions>Auto,Auto,Auto</Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>*,*</Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="{Binding DisplayTime}"
+                   FontFamily="JetBrains Mono, Consolas, Courier New"
+                   FontSize="32"
+                   Foreground="Black"
+                   HorizontalAlignment="Center" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="{Binding ActivityName}"
+                   FontSize="12"
+                   Foreground="Gray"
+                   HorizontalAlignment="Center"
+                   TextTrimming="CharacterEllipsis" />
+
+        <Button Grid.Row="2" Grid.Column="0"
+                Command="{Binding PauseResumeCommand}"
+                HorizontalAlignment="Center"
+                Content="Pause" />
+
+        <Button Grid.Row="2" Grid.Column="1"
+                Command="{Binding StopCommand}"
+                HorizontalAlignment="Center"
+                Content="Stop" />
+    </Grid>
 </UserControl>

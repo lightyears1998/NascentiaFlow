@@ -10,8 +10,9 @@ public partial class FocusTimerView : UserControl
         InitializeComponent();
     }
 
-    private void CounterLabel_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        if (e.Source is Button) return;
+        TopWindows.FocusTimerWindow?.BeginMoveDrag(e);
     }
 }
