@@ -10,11 +10,15 @@ internal static class ServiceCollectionExtensions
 {
     extension(IServiceCollection collection)
     {
-        public void AddViews()
+        public void AddDbContexts()
         {
-            collection.AddTransient<MainWindow>();
-            collection.AddTransient<FocusTimerWindow>();
-            collection.AddTransient<MainView>();
+            collection.AddTransient<CoreContext>();
+            collection.AddTransient<EditionContext>();
+        }
+
+        public void AddServices()
+        {
+            collection.AddSingleton<DateTimeService>();
         }
 
         public void AddViewModels()
@@ -25,17 +29,29 @@ internal static class ServiceCollectionExtensions
             collection.AddTransient<SettingsSceneModel>();
             collection.AddTransient<SourceSceneModel>();
             collection.AddTransient<ActivityRecordsSceneModel>();
+            collection.AddTransient<FocusSceneModel>();
+            collection.AddTransient<CalendarSceneModel>();
+            collection.AddTransient<NextActionsSceneModel>();
+            collection.AddTransient<ProjectsSceneModel>();
+            collection.AddTransient<InboxSceneModel>();
+            collection.AddTransient<WaitingSceneModel>();
+            collection.AddTransient<IncubationSceneModel>();
+            collection.AddTransient<ChronicleSceneModel>();
+            collection.AddTransient<ActivityRecordEditorSceneModel>();
+            collection.AddTransient<SourceEditorSceneModel>();
+            collection.AddTransient<FocusTimerWindowViewModel>();
+            collection.AddTransient<DateTimeInfoViewModel>();
         }
 
-        public void AddDbContexts()
+        public void AddViews()
         {
-            collection.AddTransient<CoreContext>();
-            collection.AddTransient<EditionContext>();
+            collection.AddTransient<MainView>();
         }
 
-        public void AddServices()
+        public void AddWindows()
         {
-            collection.AddSingleton<DateTimeService>();
+            collection.AddTransient<MainWindow>();
+            collection.AddTransient<FocusTimerWindow>();
         }
     }
 }

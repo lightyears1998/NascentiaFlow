@@ -13,20 +13,21 @@ namespace NascentiaFlow;
 
 public class App : Application
 {
+    private readonly ServiceProvider _provider;
+
     public App()
     {
         var collection = new ServiceCollection();
-        collection.AddServices();
         collection.AddDbContexts();
+        collection.AddServices();
         collection.AddViewModels();
         collection.AddViews();
+        collection.AddWindows();
 
-        Provider = collection.BuildServiceProvider();
+        _provider = collection.BuildServiceProvider();
     }
 
     public new static App Current => (App)(Application.Current!);
-
-    public ServiceProvider Provider { get; }
 
     public AppSettings Settings => AppSettingsManager.CurrentSettings;
 
@@ -46,20 +47,19 @@ public class App : Application
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = Provider.GetRequiredService<MainWindowViewModel>(),
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    Width = Settings.WindowWidth,
-                    Height = Settings.WindowHeight
-                };
+                var mainWindow = _provider.GetRequiredService<MainWindow>();
+                mainWindow.DataContext = _provider.GetRequiredService<MainWindowViewModel>();
+                mainWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                mainWindow.Width = Settings.WindowWidth;
+                mainWindow.Height = Settings.WindowHeight;
+                desktop.MainWindow = mainWindow;
                 break;
 
             case ISingleViewApplicationLifetime singleViewPlatform:
-                singleViewPlatform.MainView = new MainView
-                {
-                    DataContext = Provider.GetRequiredService<MainViewModel>()
-                };
+                var mainView = _provider.GetRequiredService<MainView>();
+                mainView.DataContext = _provider.GetRequiredService<MainViewModel>();
+
+                singleViewPlatform.MainView = mainView;
                 break;
         }
 

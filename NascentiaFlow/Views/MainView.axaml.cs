@@ -10,7 +10,6 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
     public MainView()
     {
         InitializeComponent();
-        DataContext ??= App.Current.Provider.GetRequiredService<MainViewModel>();
 
         this.WhenActivated(disposables =>
         {
@@ -36,7 +35,7 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
             mainVm.PopScene();
         }
     }
-    
+
     public async Task ShowScene(ISceneModel vm)
     {
         if (DataContext is MainViewModel mainVm)
@@ -48,5 +47,5 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
             }
         }
     }
-    
+
 }

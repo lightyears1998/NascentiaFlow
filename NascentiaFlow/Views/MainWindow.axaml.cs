@@ -14,7 +14,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         this.WhenActivated(disposables =>
         {
             TopWindows.MainWindow = this;
-            Disposable.Create(() => {}).DisposeWith(disposables);
+            Disposable.Create(() =>
+            {
+                TopWindows.MainWindow = null;
+            }).DisposeWith(disposables);
         });
 
         Closing += OnClosing;

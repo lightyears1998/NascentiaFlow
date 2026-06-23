@@ -1,18 +1,16 @@
-using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 
 namespace NascentiaFlow.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase
 {
-    private string _title = "NascentiaFlow";
-    public string Title
-    {
-        get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
-    }
+    [Reactive] private MainViewModel _mainViewModel;
+    [Reactive] private string _title = "NascentiaFlow";
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(MainViewModel mainViewModel)
     {
+        _mainViewModel = mainViewModel;
+
         if (Constants.DataDirNameOverwrite != string.Empty)
         {
             Title += $" (using {Constants.DataDirNameOverwrite})";

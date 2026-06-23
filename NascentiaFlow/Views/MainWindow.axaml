@@ -10,5 +10,5 @@
         Title="{Binding Title}"
         x:DataType="vm:MainWindowViewModel">
 
-        <views:MainView />
+        <views:MainView DataContext="{Binding MainViewModel}"></views:MainView>
 </Window>

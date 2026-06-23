@@ -7,11 +7,11 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
         
     <Application.Resources>
-        <views:InstantToStringConverter x:Key="InstantToStringConverter"></views:InstantToStringConverter>
+        <views:InstantToStringConverter x:Key="InstantToStringConverter" />
     </Application.Resources>
              
     <Application.Styles>
