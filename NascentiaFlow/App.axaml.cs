@@ -50,8 +50,8 @@ public class App : Application
                 var mainWindow = _provider.GetRequiredService<MainWindow>();
                 mainWindow.DataContext = _provider.GetRequiredService<MainWindowViewModel>();
                 mainWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                mainWindow.Width = Settings.WindowWidth;
-                mainWindow.Height = Settings.WindowHeight;
+                mainWindow.Width = Settings.MainWindowWidth;
+                mainWindow.Height = Settings.MainWindowHeight;
                 desktop.MainWindow = mainWindow;
                 break;
 

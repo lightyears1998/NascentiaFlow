@@ -25,8 +25,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private void OnClosing(object? sender, WindowClosingEventArgs e)
     {
-        AppSettingsManager.CurrentSettings.WindowWidth = Width;
-        AppSettingsManager.CurrentSettings.WindowHeight = Height;
+        AppSettingsManager.CurrentSettings.MainWindowWidth = Width;
+        AppSettingsManager.CurrentSettings.MainWindowHeight = Height;
         AppSettingsManager.SaveSettingsToFile();
     }
 }

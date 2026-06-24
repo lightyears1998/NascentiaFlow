@@ -11,9 +11,10 @@ public record AppSettings
 
     public bool DisplayTimezoneInDatetimeString { get; set; } = false;
 
-    public double WindowWidth { get; set; } = 600;
+    public double MainWindowWidth { get; set; } = 600;
 
-    public double WindowHeight { get; set; } = 360;
+    public double MainWindowHeight { get; set; } = 360;
+
     public int FocusTimerWindowX { get; set; } = -1;
 
     public int FocusTimerWindowY { get; set; } = -1;
@@ -44,7 +45,7 @@ public static class AppSettingsManager
 
         CurrentSettings = settings;
     }
-    
+
     public static bool SettingsFileExists()
     {
         return Exists(Constants.AppSettingsPath);
@@ -75,12 +76,12 @@ public static class AppSettingsManager
         var settingsText = Toml.FromModel(settings);
         WriteAllText(Constants.AppSettingsPath, settingsText);
     }
-    
+
     public static void SaveSettingsToFile()
     {
         if (CurrentSettings == LastLoadedSettings)
             return;
-        
+
         SaveSettingsToFile(CurrentSettings);
         LastLoadedSettings = CurrentSettings;
     }
