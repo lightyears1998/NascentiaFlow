@@ -14,6 +14,9 @@ public record AppSettings
     public double WindowWidth { get; set; } = 600;
 
     public double WindowHeight { get; set; } = 360;
+    public int FocusTimerWindowX { get; set; } = -1;
+
+    public int FocusTimerWindowY { get; set; } = -1;
 }
 
 public static class AppSettingsManager

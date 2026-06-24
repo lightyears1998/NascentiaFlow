@@ -23,7 +23,7 @@
 
             <Label Content="Expected Duration (minutes)" />
             <NumericUpDown Value="{Binding ExpectedMinutes}"
-                          Minimum="1"
+                          Minimum="0"
                           Maximum="480" />
 
             <Button Content="Start Focus"
