@@ -105,6 +105,7 @@ public class App : Application
         AppSettingsManager.MakeSettingsAvailable();
     }
 
+    // TODO move to background thread and don't block ui
     private void InitDatabases()
     {
         using var coreContext = new CoreContext();

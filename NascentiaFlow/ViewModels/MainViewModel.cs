@@ -39,14 +39,25 @@ public class MainViewModel : ViewModelBase
     {
         if (Scenes.Count < 2) return;
 
+        var sceneToPop = Scenes.Last();
         Scenes.RemoveAt(Scenes.Count - 1);
+
+        if (sceneToPop is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 
     public void SwitchToScene(ISceneModel vm)
     {
         if (!Scenes.Contains(vm)) return;
 
-        var itemsToPop = Scenes.TakeLast(Scenes.Count - Scenes.IndexOf(vm) - 1);
-        Scenes.RemoveMany(itemsToPop);
+        var scenesToPop = Scenes.TakeLast(Scenes.Count - Scenes.IndexOf(vm) - 1).ToList();
+        Scenes.RemoveMany(scenesToPop);
+
+        foreach (var scene in scenesToPop.OfType<IDisposable>())
+        {
+            scene.Dispose();
+        }
     }
 }

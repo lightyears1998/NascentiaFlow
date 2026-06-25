@@ -1,40 +1,26 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using DynamicData;
+using Microsoft.EntityFrameworkCore;
 using NascentiaFlow.Entities;
 using NodaTime;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using Activity = NascentiaFlow.Entities.Activity;
 
 namespace NascentiaFlow.ViewModels;
 
-public partial class ActivityRecordsSceneModel : SceneModelBase
+public sealed partial class ActivityRecordsSceneModel : SceneModelBase, IDisposable
 {
-    public override string Name => "Activity Records";
-
-    public ObservableCollection<Activity> Activities { get; } = [];
-
-    [Reactive]
-    private Activity? _selectedActivity;
+    private CoreContext _coreContext;
 
     [Reactive]
     private DateTime _filterDate = DateTime.Now;
 
-    private CoreContext _coreContext;
-
-    public IObservable<bool> AnyItemSelected { get; }
-
-    public Interaction<Activity?, Activity?> EditActivityInteraction { get; } = new();
-
-    public ReactiveCommand<Unit, Unit> AddActivityCommand { get; }
-
-    public ReactiveCommand<Unit, Unit> EditActivityCommand { get; }
-
-    public ReactiveCommand<Unit, Unit> RemoveSelectedItemCommand { get; }
-
-    public ReactiveCommand<Unit, Unit> SelectPreviousDayCommand { get; }
-
-    public ReactiveCommand<Unit, Unit> SelectNextDayCommand { get;  }
+    [Reactive]
+    private Activity? _selectedActivity;
 
     public ActivityRecordsSceneModel()
     {
@@ -42,9 +28,6 @@ public partial class ActivityRecordsSceneModel : SceneModelBase
 
         AnyItemSelected = this.WhenAnyValue(x => x.SelectedActivity)
             .Select(x => x != null);
-
-        this.WhenAnyValue(x => x.FilterDate)
-            .Subscribe(_ => ReloadActivities());
 
         AddActivityCommand = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -85,13 +68,46 @@ public partial class ActivityRecordsSceneModel : SceneModelBase
             FilterDate = FilterDate.AddDays(1);
         });
 
-        ReloadActivities();
+        this.WhenActivated(d =>
+        {
+            this.WhenAnyValue(x => x.FilterDate)
+                .Select(_ => Observable.FromAsync(async ct => await IsBusyFor(ReloadActivitiesAsync, ct)))
+                .Switch()
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(v =>
+                {
+                    Activities.Clear();
+                    Activities.AddRange(v);
+                })
+                .DisposeWith(d);
+        });
     }
 
-    private void ReloadActivities()
-    {
-        Activities.Clear();
+    public override string Name => "Activity Records";
 
+    public ObservableCollection<Activity> Activities { get; } = [];
+
+    public IObservable<bool> AnyItemSelected { get; }
+
+    public Interaction<Activity?, Activity?> EditActivityInteraction { get; } = new();
+
+    public ReactiveCommand<Unit, Unit> AddActivityCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> EditActivityCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> RemoveSelectedItemCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> SelectPreviousDayCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> SelectNextDayCommand { get;  }
+
+    public void Dispose()
+    {
+        _coreContext.Dispose();
+    }
+
+    private async Task<List<Activity>> ReloadActivitiesAsync(CancellationToken ct)
+    {
         var query = _coreContext.Activities.AsQueryable();
 
         var localStart = FilterDate.Date;
@@ -100,6 +116,6 @@ public partial class ActivityRecordsSceneModel : SceneModelBase
         var endInstant = Instant.FromDateTimeUtc(localEnd.ToUniversalTime());
         query = query.Where(x => x.EndedAt >= startInstant && x.StartedAt < endInstant);
 
-        Activities.AddRange(query.OrderBy(x => x.StartedAt).ToList());
+        return await query.OrderBy(x => x.StartedAt).ToListAsync(ct);
     }
 }

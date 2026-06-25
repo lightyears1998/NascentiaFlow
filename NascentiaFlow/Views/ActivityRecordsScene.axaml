@@ -15,6 +15,7 @@
             <Button Command="{Binding SelectPreviousDayCommand}">Prev</Button>
             <CalendarDatePicker SelectedDate="{Binding FilterDate}" />
             <Button Command="{Binding SelectNextDayCommand}">Next</Button>
+            <Label IsVisible="{Binding IsBusy}" VerticalAlignment="Center">Loading...</Label>
         </StackPanel>
 
         <DataGrid Grid.Row="1"
