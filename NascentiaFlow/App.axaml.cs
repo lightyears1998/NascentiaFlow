@@ -8,6 +8,7 @@ using NascentiaFlow.ViewModels;
 using NascentiaFlow.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NascentiaFlow.Utilities;
 
 namespace NascentiaFlow;
 
@@ -40,6 +41,40 @@ public class App : Application
     {
         InitConstants();
         EnsureLocalDataDirs();
+
+        if (GetAppInstanceLock())
+        {
+            RunApp();
+        }
+        else
+        {
+            AbortAppStartup();
+        }
+
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    private void AbortAppStartup()
+    {
+        // TODO show some proper prompt to tell users the app is already running.
+        throw new NotImplementedException();
+    }
+
+    private bool GetAppInstanceLock()
+    {
+        try
+        {
+            Globals.AppInstanceMutex = new FileMutex(Constants.AppInstanceFileMutexPath);
+        }
+        catch (Exception _)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private void RunApp()
+    {
         InitSettings();
         EnsureRoamingDataDirs();
         InitDatabases();
@@ -47,6 +82,7 @@ public class App : Application
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
+                desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
                 var mainWindow = _provider.GetRequiredService<MainWindow>();
                 mainWindow.DataContext = _provider.GetRequiredService<MainWindowViewModel>();
                 mainWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -62,8 +98,6 @@ public class App : Application
                 singleViewPlatform.MainView = mainView;
                 break;
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
 
     private void InitSettings()
@@ -133,5 +167,13 @@ public class App : Application
         EnsureDirs([
             Constants.AppRoamingDataDir, Constants.DbDir
         ]);
+    }
+
+    // TODO refactor to work on IActivatable platform
+    public void CloseApp()
+    {
+        TopWindows.FocusTimerWindow?.Close();
+        TopWindows.MainWindow?.Close();
+        AppSettingsManager.SaveSettingsToFile();
     }
 }

@@ -18,4 +18,6 @@ public static class Constants
     public static string EditionDbPath => Path.Combine(DbDir, "editions.sqlite3");
 
     public static string AppSettingsPath => Path.Combine(AppLocalDataDir, "settings.toml");
+
+    public static string AppInstanceFileMutexPath => Path.Combine(AppLocalDataDir, "app.lock");
 }
