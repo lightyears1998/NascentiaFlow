@@ -25,7 +25,7 @@ public partial class FocusTimerWindow : ReactiveWindow<FocusTimerWindowViewModel
                     {
                         TopWindows.FocusTimerWindow = null;
                         Close();
-                        TopWindows.MainWindow?.Show();
+                        TopWindows.MainWindow?.WindowState = WindowState.Normal;
                     });
                 })
                 .DisposeWith(disposables);

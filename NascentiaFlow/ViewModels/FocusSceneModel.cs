@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 
@@ -42,7 +43,7 @@ public partial class FocusSceneModel : SceneModelBase
             TopWindows.FocusTimerWindow?.Close();
             TopWindows.FocusTimerWindow = window;
             window.Show();
-            TopWindows.MainWindow?.Hide();
+            TopWindows.MainWindow?.WindowState = WindowState.Minimized;
         }, CanStartFocus);
     }
 }
