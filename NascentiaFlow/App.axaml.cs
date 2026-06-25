@@ -66,7 +66,7 @@ public class App : Application
         {
             Globals.AppInstanceMutex = new FileMutex(Constants.AppInstanceFileMutexPath);
         }
-        catch (Exception _)
+        catch (Exception)
         {
             return false;
         }

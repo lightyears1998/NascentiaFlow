@@ -12,6 +12,15 @@ public partial class FocusTimerWindow : ReactiveWindow<FocusTimerWindowViewModel
     {
         InitializeComponent();
 
+        Win32Properties.AddWindowStylesCallback(this, (style, exStyle) =>
+        {
+            // ReSharper disable InconsistentNaming
+            const uint WS_EX_TOOLWINDOW = 0x00000080;
+            exStyle |= WS_EX_TOOLWINDOW;
+            return (style, exStyle);
+            // ReSharper restore InconsistentNaming
+        });
+
         this.WhenActivated(disposables =>
         {
             Current = this;
