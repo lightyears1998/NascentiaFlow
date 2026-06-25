@@ -1,16 +1,29 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using Avalonia.Threading;
 using DynamicData;
 using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 
 namespace NascentiaFlow.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public enum AppState
+{
+    Loading,
+    Running,
+    ShuttingDown
+}
+
+public partial class AppLoadingViewModel : ViewModelBase
+{
+}
+
+public partial class AppContentViewModel : ViewModelBase
 {
     private readonly ObservableAsPropertyHelper<ISceneModel> _currentScene;
 
-    public MainViewModel(HomeSceneModel homeScene)
+    public AppContentViewModel(HomeSceneModel homeScene)
     {
         Scenes.Add(homeScene);
 
@@ -59,5 +72,47 @@ public class MainViewModel : ViewModelBase
         {
             scene.Dispose();
         }
+    }
+}
+
+public partial class AppDismissingViewModel : ViewModelBase
+{
+}
+
+public partial class MainViewModel : ViewModelBase
+{
+    [Reactive] private AppState _appState = AppState.Loading;
+
+    private readonly ObservableAsPropertyHelper<ViewModelBase> _currentAppViewModel;
+
+    public MainViewModel(AppLoadingViewModel loadingVm, AppContentViewModel contentVm, AppDismissingViewModel dismissingVm)
+    {
+        _currentAppViewModel = this.WhenAnyValue(x => x.AppState)
+            .Select(x =>
+            {
+                ViewModelBase vm = x switch
+                {
+                    AppState.Loading => loadingVm,
+                    AppState.Running => contentVm,
+                    AppState.ShuttingDown => dismissingVm,
+                    _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+                };
+                return vm;
+            })
+            .ToProperty(this, x => x.CurrentAppViewModel);
+
+        Task.Run(async () => await InitApp());
+    }
+
+    public ViewModelBase CurrentAppViewModel => _currentAppViewModel.Value;
+
+    private async Task InitApp()
+    {
+        // TODO do real initialization here
+        // await Task.Delay(3000);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            AppState = AppState.Running;
+        });
     }
 }

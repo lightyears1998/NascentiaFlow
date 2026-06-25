@@ -8,40 +8,48 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="NascentiaFlow.Views.MainView"
              x:DataType="vm:MainViewModel">
-    <Design.DataContext>
-        <vm:MainViewModel>
-            <x:Arguments>
-                <vm:HomeSceneModel />
-            </x:Arguments>
-        </vm:MainViewModel>
-    </Design.DataContext>
-    
-    <Grid>
-        <Grid.RowDefinitions>Auto,*</Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>*,Auto</Grid.ColumnDefinitions>
+    <UserControl.DataTemplates>
+        <DataTemplate x:DataType="vm:AppLoadingViewModel">
+            <TextBlock>
+                Application is starting...
+            </TextBlock>
+        </DataTemplate>
 
-        <!-- Navigation bar -->
-        <views:NavigationBar Grid.Row="0" Grid.Column="0" Name="Navigation"></views:NavigationBar>
+        <DataTemplate x:DataType="vm:AppContentViewModel">
+            <Grid>
+                <Grid.RowDefinitions>Auto,*</Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>*,Auto</Grid.ColumnDefinitions>
 
-        <!-- Main content area -->
-        <ContentControl Grid.Row="1" Grid.Column="0" Name="Screen" Content="{Binding CurrentScene}">
-            <ContentControl.DataTemplates>
-                <local:SceneLocator />
-            </ContentControl.DataTemplates>
-        </ContentControl>
+                <!-- Navigation bar -->
+                <views:NavigationBar Grid.Row="0" Grid.Column="0" Name="Navigation" />
 
-        <!-- Tool panel -->
-        <ContentControl 
-            Name="ToolPanel"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="1"
-            Content="{Binding CurrentScene}"
-            Width="88"
-            Background="LightBlue">
-            <ContentControl.DataTemplates>
-                <local:SceneToolPanelLocator />
-            </ContentControl.DataTemplates>
-        </ContentControl>
-    </Grid>
+                <!-- Main content area -->
+                <ContentControl Grid.Row="1" Grid.Column="0" Name="Screen" Content="{Binding CurrentScene}">
+                    <ContentControl.DataTemplates>
+                        <local:SceneLocator />
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+
+                <!-- Tool panel -->
+                <ContentControl
+                    Name="ToolPanel"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Content="{Binding CurrentScene}"
+                    Width="88"
+                    Background="LightBlue">
+                    <ContentControl.DataTemplates>
+                        <local:SceneToolPanelLocator />
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:AppDismissingViewModel">
+            <TextBlock>The app is closing...</TextBlock>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+    <ContentControl Content="{Binding CurrentAppViewModel}" />
 </UserControl>

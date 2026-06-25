@@ -1,6 +1,5 @@
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 
 namespace NascentiaFlow.Views;
@@ -22,30 +21,29 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
 
     public void NavigateTo(ISceneModel vm)
     {
-        if (DataContext is MainViewModel mainVm)
+        if (DataContext is MainViewModel { CurrentAppViewModel: AppContentViewModel navigation })
         {
-            mainVm.PushScene(vm);
+            navigation.PushScene(vm);
         }
     }
 
     public void NavigateBack()
     {
-        if (DataContext is MainViewModel mainVm)
+        if (DataContext is MainViewModel { CurrentAppViewModel: AppContentViewModel navigation })
         {
-            mainVm.PopScene();
+            navigation.PopScene();
         }
     }
 
     public async Task ShowScene(ISceneModel vm)
     {
-        if (DataContext is MainViewModel mainVm)
+        if (DataContext is MainViewModel { CurrentAppViewModel: AppContentViewModel navigation })
         {
-            mainVm.PushScene(vm);
-            while (mainVm.Scenes.Contains(vm))
+            navigation.PushScene(vm);
+            while (navigation.Scenes.Contains(vm))
             {
                 await vm.Deactivated.FirstAsync();
             }
         }
     }
-
 }

@@ -12,6 +12,7 @@ internal static class ServiceCollectionExtensions
     {
         public void AddDbContexts()
         {
+
             collection.AddTransient<CoreContext>();
             collection.AddTransient<EditionContext>();
         }
@@ -23,6 +24,9 @@ internal static class ServiceCollectionExtensions
 
         public void AddViewModels()
         {
+            collection.AddTransient<AppLoadingViewModel>();
+            collection.AddTransient<AppContentViewModel>();
+            collection.AddTransient<AppDismissingViewModel>();
             collection.AddTransient<MainWindowViewModel>();
             collection.AddTransient<MainViewModel>();
             collection.AddTransient<HomeSceneModel>();

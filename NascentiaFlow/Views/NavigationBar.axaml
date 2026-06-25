@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:NascentiaFlow.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="NascentiaFlow.Views.NavigationBar"
-             x:DataType="vm:MainViewModel">
+             x:DataType="vm:AppContentViewModel">
     <Grid Background="Aquamarine">
         <ItemsControl ItemsSource="{Binding Scenes}">
             <ItemsControl.ItemsPanel>
@@ -18,9 +18,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Name}"
-                            Command="{ReflectionBinding DataContext.RequestSwitchSceneCommand,
-                            RelativeSource={RelativeSource AncestorType=views:NavigationBar}}"
-                            CommandParameter="{Binding }" />
+                            Command="{Binding $parent.((vm:AppContentViewModel)DataContext).RequestSwitchSceneCommand, FallbackValue={x:Null}}"
+                            CommandParameter="{Binding .}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
