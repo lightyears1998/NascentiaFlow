@@ -10,8 +10,8 @@
              x:DataType="vm:MainViewModel">
     <UserControl.DataTemplates>
         <DataTemplate x:DataType="vm:AppLoadingViewModel">
-            <TextBlock>
-                Application is starting...
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                The application is starting...
             </TextBlock>
         </DataTemplate>
 
@@ -47,7 +47,9 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="vm:AppDismissingViewModel">
-            <TextBlock>The app is closing...</TextBlock>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                The application is closing...
+            </TextBlock>
         </DataTemplate>
     </UserControl.DataTemplates>
 

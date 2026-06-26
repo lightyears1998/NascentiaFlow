@@ -1,36 +1,14 @@
-using System.Reactive.Subjects;
 using System.Threading;
 using Avalonia.Threading;
 using ReactiveUI;
 
 namespace NascentiaFlow.ViewModels;
 
-public abstract class ViewModelBase : ReactiveObject, IActivatableViewModel
+public abstract class ViewModelBase : ReactiveObject
 {
-    private readonly Subject<Unit> _activated = new();
-    private readonly Subject<Unit> _deactivated = new();
     private long _isBusy;
 
-    protected ViewModelBase()
-    {
-        this.WhenActivated(disposables =>
-        {
-            _activated.OnNext(Unit.Default);
-
-            Disposable.Create(() =>
-            {
-                _deactivated.OnNext(Unit.Default);
-            }).DisposeWith(disposables);
-        });
-    }
-
     public bool IsBusy => Interlocked.Read(ref _isBusy) > 0;
-
-    public IObservable<Unit> Activated => _activated;
-
-    public IObservable<Unit> Deactivated => _deactivated;
-
-    public ViewModelActivator Activator { get; } = new();
 
     public async Task IsBusyFor(Func<Task> unitOfWork)
     {

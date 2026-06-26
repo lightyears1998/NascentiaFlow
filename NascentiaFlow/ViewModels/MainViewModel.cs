@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using DynamicData;
 using DynamicData.Binding;
@@ -18,10 +20,75 @@ public enum AppState
     ShuttingDown
 }
 
-public partial class AppLoadingViewModel : ViewModelBase
-{}
+public class AppLoadingViewModel : ViewModelBase
+{
+    private readonly AppEnvironment _environment;
+    private readonly IDbContextFactory<CoreContext> _coreContextFactory;
+    private readonly IDbContextFactory<EditionContext> _editionContextFactory;
+    private readonly Subject<Unit> _appLoaded = new();
 
-public partial class AppContentViewModel : ViewModelBase
+    public AppLoadingViewModel(AppEnvironment environment, IDbContextFactory<CoreContext> coreContextFactory, IDbContextFactory<EditionContext> editionContextFactory)
+    {
+        _environment = environment;
+        _coreContextFactory = coreContextFactory;
+        _editionContextFactory = editionContextFactory;
+
+        BeginInitApp();
+    }
+
+    private void BeginInitApp()
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                await InitApp(CancellationToken.None);
+                _appLoaded.OnCompleted();
+            }
+            catch (Exception ex)
+            {
+                _appLoaded.OnError(ex);
+            }
+        });
+    }
+
+    public IObservable<Unit> AppLoaded => _appLoaded;
+
+    private async Task InitApp(CancellationToken ct)
+    {
+        EnsureRoamingDataDirs();
+        await InitDatabases(ct).ConfigureAwait(false);
+    }
+
+    private void EnsureRoamingDataDirs()
+    {
+        FileSystem.EnsureDirs([
+            _environment.AppRoamingDataDir, _environment.DbDir
+        ]);
+    }
+
+    private async Task InitDatabases(CancellationToken ct)
+    {
+        var coreContextTask = _coreContextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
+        var editionContextTask = _editionContextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
+        var (coreContext, editionContext) = (await coreContextTask, await editionContextTask);
+
+        try
+        {
+            await Task.WhenAll(coreContext.Database.MigrateAsync(ct), editionContext.Database.MigrateAsync(ct)).ConfigureAwait(false);
+        }
+        catch (AggregateException ex)
+        {
+            // ReSharper disable MethodHasAsyncOverload
+            Console.Error.WriteLine(ex.ToString());
+            Console.Error.WriteLine($"Errored handling local database, Core={_environment.CoreDbPath} and Edition={_environment.EditionDbPath}");
+            // ReSharper restore MethodHasAsyncOverload
+            throw;
+        }
+    }
+}
+
+public class AppContentViewModel : ViewModelBase
 {
     private readonly ObservableAsPropertyHelper<ISceneModel> _currentScene;
 
@@ -74,81 +141,73 @@ public partial class AppContentViewModel : ViewModelBase
     }
 }
 
-public partial class AppDismissingViewModel : ViewModelBase
+public class AppDismissingViewModel : ViewModelBase
 {}
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : ActivatableViewModel
 {
-    private readonly AppEnvironment _environment;
-    private readonly IDbContextFactory<CoreContext> _coreContextFactory;
-    private readonly IDbContextFactory<EditionContext> _editionContextFactory;
     private readonly ObservableAsPropertyHelper<ViewModelBase> _currentAppViewModel;
 
     [Reactive] private AppState _appState = AppState.Loading;
+    [Reactive] private AppLoadingViewModel? _loadingVm;
+    [Reactive] private AppContentViewModel? _contentVm;
+    [Reactive] private AppDismissingViewModel? _dismissingVm;
 
-    public MainViewModel(AppEnvironment environment, IDbContextFactory<CoreContext> coreContextFactory, IDbContextFactory<EditionContext> editionContextFactory, AppLoadingViewModel loadingVm, AppContentViewModel contentVm, AppDismissingViewModel dismissingVm)
+    public MainViewModel(AppLoadingViewModel loadingVm, AppContentViewModel contentVm, AppDismissingViewModel dismissingVm)
     {
-        _environment = environment;
-        _coreContextFactory = coreContextFactory;
-        _editionContextFactory = editionContextFactory;
+        _loadingVm = loadingVm;
+        _contentVm = contentVm;
+        _dismissingVm = dismissingVm;
 
         _currentAppViewModel = this.WhenAnyValue(x => x.AppState)
             .Select(x =>
             {
                 ViewModelBase vm = x switch
                 {
-                    AppState.Loading => loadingVm,
-                    AppState.Running => contentVm,
-                    AppState.ShuttingDown => dismissingVm,
+                    AppState.Loading => _loadingVm!,
+                    AppState.Running => _contentVm!,
+                    AppState.ShuttingDown => _dismissingVm!,
                     _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
                 };
                 return vm;
             })
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .ToProperty(this, x => x.CurrentAppViewModel);
 
         this.WhenActivated(d =>
         {
-            Observable.FromAsync(InitApp)
-                .SubscribeOn(RxSchedulers.TaskpoolScheduler)
-                .ObserveOn(RxSchedulers.MainThreadScheduler)
-                .Subscribe(_ =>
+            var appStateHandler = new SerialDisposable().DisposeWith(d);
+
+            this.WhenAnyValue(x => x.AppState)
+                .Do(state =>
                 {
-                    AppState = AppState.Running;
+                    appStateHandler.Disposable = state switch
+                    {
+                        AppState.Loading => HandleAppLoading(),
+                        _ => Disposable.Empty
+                    };
                 })
+                .Subscribe()
                 .DisposeWith(d);
         });
     }
 
+    private IDisposable HandleAppLoading()
+    {
+        Debug.Assert(LoadingVm != null);
+
+        return LoadingVm.AppLoaded
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Do(_ => { }, _ =>
+            {
+                AppState = AppState.ShuttingDown;
+                ContentVm = null;
+            }, () =>
+            {
+                AppState = AppState.Running;
+            })
+            .Subscribe();
+    }
+
     public ViewModelBase CurrentAppViewModel => _currentAppViewModel.Value;
-
-    private async Task InitApp(CancellationToken ct)
-    {
-        EnsureRoamingDataDirs();
-        await InitDatabases(ct).ConfigureAwait(false);
-    }
-
-    private void EnsureRoamingDataDirs()
-    {
-        FileSystem.EnsureDirs([
-            _environment.AppRoamingDataDir, _environment.DbDir
-        ]);
-    }
-
-    private async Task InitDatabases(CancellationToken ct)
-    {
-        var coreContextTask = _coreContextFactory.CreateDbContextAsync(ct);
-        var editionContextTask = _editionContextFactory.CreateDbContextAsync(ct);
-        var (coreContext, editionContext) = (await coreContextTask, await editionContextTask);
-
-        try
-        {
-            await Task.WhenAll(coreContext.Database.MigrateAsync(ct), editionContext.Database.MigrateAsync(ct));
-        }
-        catch (AggregateException ex)
-        {
-            Console.Error.WriteLine(ex.ToString());
-            Console.Error.WriteLine($"Errored handling local database, Core={_environment.CoreDbPath} and Edition={_environment.EditionDbPath}");
-            throw;
-        }
-    }
 }

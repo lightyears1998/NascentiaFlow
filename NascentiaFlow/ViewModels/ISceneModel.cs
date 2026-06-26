@@ -9,7 +9,7 @@ public interface ISceneModel
     IObservable<Unit> Deactivated { get; }
 }
 
-public abstract class SceneModelBase : ViewModelBase, ISceneModel
+public abstract class SceneModelBase : ActivatableViewModel, ISceneModel
 {
     public abstract string Name { get; }
 }
