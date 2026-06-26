@@ -1,5 +1,4 @@
 using Avalonia.Interactivity;
-using Microsoft.EntityFrameworkCore.Internal;
 using NascentiaFlow.Entities;
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;

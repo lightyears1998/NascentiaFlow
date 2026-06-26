@@ -38,7 +38,7 @@ public partial class FocusSceneModel : SceneModelBase
                 TimeSpan.FromMinutes(ExpectedMinutes));
 
             // TODO this is also bad, ViewModel should not create view
-            var window = new Views.FocusTimerWindow(settingsManager)
+            var window = new Views.FocusTimerWindow()
             {
                 DataContext = vm
             };

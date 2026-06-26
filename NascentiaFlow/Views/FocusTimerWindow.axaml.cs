@@ -8,12 +8,8 @@ namespace NascentiaFlow.Views;
 
 public partial class FocusTimerWindow : ReactiveWindow<FocusTimerWindowViewModel>
 {
-    private readonly AppSettingsManager _settingsManager;
-
-    public FocusTimerWindow(AppSettingsManager settingsManager)
+    public FocusTimerWindow()
     {
-        _settingsManager = settingsManager;
-
         InitializeComponent();
 
         Win32Properties.AddWindowStylesCallback(this, (style, exStyle) =>
@@ -64,13 +60,13 @@ public partial class FocusTimerWindow : ReactiveWindow<FocusTimerWindowViewModel
 
     private void SavePositionToSettings()
     {
-        _settingsManager.CurrentSettings.FocusTimerWindowX = Position.X;
-        _settingsManager.CurrentSettings.FocusTimerWindowY = Position.Y;
+        App.Current.Settings.FocusTimerWindowX = Position.X;
+        App.Current.Settings.FocusTimerWindowY = Position.Y;
     }
 
     private void UpdatePosition()
     {
-        var settings = _settingsManager.CurrentSettings;
+        var settings = App.Current.Settings;
 
         if (settings is { FocusTimerWindowX: >= 0, FocusTimerWindowY: >= 0 })
         {

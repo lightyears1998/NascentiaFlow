@@ -1,12 +1,9 @@
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
-using Avalonia.Threading;
 using DynamicData;
+using DynamicData.Binding;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using NascentiaFlow.Entities;
 using NascentiaFlow.Utilities;
 using ReactiveUI;
@@ -32,10 +29,7 @@ public partial class AppContentViewModel : ViewModelBase
     {
         Scenes.Add(homeScene);
 
-        _currentScene = Observable.FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                handler => (_, args) => handler(args),
-                handler => Scenes.CollectionChanged += handler,
-                handler => Scenes.CollectionChanged -= handler)
+        _currentScene = Scenes.ObserveCollectionChanges()
             .Select(_ => Scenes.Last())
             .ToProperty(this, x => x.CurrentScene, Scenes.Last());
 
