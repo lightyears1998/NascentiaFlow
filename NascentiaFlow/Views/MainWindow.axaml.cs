@@ -15,10 +15,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         this.WhenActivated(disposables =>
         {
-            TopWindows.MainWindow = this;
+            App.Current.TopWindows.MainWindow = this;
             Disposable.Create(() =>
             {
-                TopWindows.MainWindow = null;
+                App.Current.TopWindows.MainWindow = null;
             }).DisposeWith(disposables);
         });
 
@@ -31,8 +31,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         if (_isClosing) return;
         _isClosing = true;
 
-        AppSettingsManager.CurrentSettings.MainWindowWidth = Width;
-        AppSettingsManager.CurrentSettings.MainWindowHeight = Height;
-        App.Current.CloseApp();
+        App.Current.Settings.MainWindowWidth = Width;
+        App.Current.Settings.MainWindowHeight = Height;
+        App.Current.Shutdown();
     }
 }

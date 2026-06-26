@@ -2,17 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NascentiaFlow.Entities;
 
-public class CoreContext : DbContext
+public class CoreContext(AppEnvironment appEnvironment) : DbContext
 {
-    public DbSet<Focus> Focuses { set; get; }
-    public DbSet<Diary> Diaries { set; get; }
-    public DbSet<Source> Sources { set; get; }
-    public DbSet<Activity> Activities { set; get; }
-    public DbSet<ActivityType> ActivityTypes { set; get; }
+    public DbSet<Focus> Focuses { get; set; }
+    public DbSet<Diary> Diaries { get; set; }
+    public DbSet<Source> Sources { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+    public DbSet<ActivityType> ActivityTypes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"Data Source={Constants.CoreDbPath}", builder =>
+        optionsBuilder.UseSqlite($"Data Source={appEnvironment.CoreDbPath}", builder =>
         {
             builder.UseNodaTime();
         });
@@ -23,13 +23,13 @@ public class CoreContext : DbContext
     }
 }
 
-public class EditionContext : DbContext
+public class EditionContext(AppEnvironment appEnvironment) : DbContext
 {
-    public DbSet<Edition> Editions { set; get; }
+    public DbSet<Edition> Editions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"Data Source={Constants.EditionDbPath}", builder =>
+        optionsBuilder.UseSqlite($"Data Source={appEnvironment.EditionDbPath}", builder =>
         {
             builder.UseNodaTime();
         });

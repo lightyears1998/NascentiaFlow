@@ -7,8 +7,6 @@ public record AppSettings
 {
     public string Schema { get; set; } = "v3.0.1";
 
-    public string AppRoamingDataDir { set; get; } = string.Empty;
-
     public bool DisplayTimezoneInDatetimeString { get; set; } = false;
 
     public double MainWindowWidth { get; set; } = 600;
@@ -20,48 +18,53 @@ public record AppSettings
     public int FocusTimerWindowY { get; set; } = -1;
 }
 
-public static class AppSettingsManager
+public class AppSettingsManager
 {
-    public static AppSettings? LastLoadedSettings { get; private set; }
+    private readonly AppEnvironment _appEnvironment;
 
-    public static AppSettings CurrentSettings { get; private set; } = new();
-
-    public static void MakeSettingsAvailable()
+    public AppSettingsManager(AppEnvironment appEnvironment)
     {
-        if (!SettingsFileExists())
-        {
-            RestoreSettingsFileToDefault();
-        }
-
-        LoadSettingsFromFile();
+        _appEnvironment = appEnvironment;
     }
 
-    public static void MakeSettingsCurrent(AppSettings settings)
-    {
-        if (settings.AppRoamingDataDir != string.Empty)
-        {
-            Constants.AppRoamingDataDir = settings.AppRoamingDataDir;
-        }
+    public AppSettings? LastLoadedSettings { get; private set; }
 
+    public AppSettings CurrentSettings { get; private set; } = new();
+
+    public void MakeSettingsAvailable()
+    {
+        if (SettingsFileExists())
+        {
+            LoadSettingsFromFile();
+        }
+        else
+        {
+            RestoreSettingsFileToDefault();
+            CurrentSettings = new AppSettings();
+        }
+    }
+
+    public void MakeSettingsCurrent(AppSettings settings)
+    {
         CurrentSettings = settings;
     }
 
-    public static bool SettingsFileExists()
+    public bool SettingsFileExists()
     {
-        return Exists(Constants.AppSettingsPath);
+        return Exists(_appEnvironment.AppSettingsPath);
     }
 
-    public static void RestoreSettingsFileToDefault()
+    public void RestoreSettingsFileToDefault()
     {
         SaveSettingsToFile(new AppSettings());
     }
 
-    public static bool LoadSettingsFromFile()
+    public bool LoadSettingsFromFile()
     {
-        if (!Exists(Constants.AppSettingsPath))
+        if (!Exists(_appEnvironment.AppSettingsPath))
             return false;
 
-        var settingsText = ReadAllText(Constants.AppSettingsPath);
+        var settingsText = ReadAllText(_appEnvironment.AppSettingsPath);
         Toml.TryToModel<AppSettings>(settingsText, out var settings, out var diag);
 
         if (settings == null)
@@ -71,13 +74,13 @@ public static class AppSettingsManager
         return true;
     }
 
-    private static void SaveSettingsToFile(AppSettings settings)
+    private void SaveSettingsToFile(AppSettings settings)
     {
         var settingsText = Toml.FromModel(settings);
-        WriteAllText(Constants.AppSettingsPath, settingsText);
+        WriteAllText(_appEnvironment.AppSettingsPath, settingsText);
     }
 
-    public static void SaveSettingsToFile()
+    public void SaveSettingsToFile()
     {
         if (CurrentSettings == LastLoadedSettings)
             return;

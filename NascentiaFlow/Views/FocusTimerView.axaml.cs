@@ -13,6 +13,6 @@ public partial class FocusTimerView : UserControl
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (e.Source is Button) return;
-        TopWindows.FocusTimerWindow?.BeginMoveDrag(e);
+        App.Current.TopWindows.FocusTimerWindow?.BeginMoveDrag(e);
     }
 }

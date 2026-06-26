@@ -14,7 +14,7 @@ namespace NascentiaFlow.ViewModels;
 
 public sealed partial class ActivityRecordsSceneModel : SceneModelBase, IDisposable
 {
-    private CoreContext _coreContext;
+    private readonly CoreContext _coreContext;
 
     [Reactive]
     private DateTime _filterDate = DateTime.Now;
@@ -22,9 +22,9 @@ public sealed partial class ActivityRecordsSceneModel : SceneModelBase, IDisposa
     [Reactive]
     private Activity? _selectedActivity;
 
-    public ActivityRecordsSceneModel()
+    public ActivityRecordsSceneModel(CoreContext coreContext)
     {
-        _coreContext = new CoreContext();
+        _coreContext = coreContext;
 
         AnyItemSelected = this.WhenAnyValue(x => x.SelectedActivity)
             .Select(x => x != null);

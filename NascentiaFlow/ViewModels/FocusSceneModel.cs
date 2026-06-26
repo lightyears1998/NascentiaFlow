@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Microsoft.EntityFrameworkCore;
+using NascentiaFlow.Entities;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 
@@ -21,29 +23,30 @@ public partial class FocusSceneModel : SceneModelBase
 
     public ReactiveCommand<Unit, Unit> StartFocusCommand { get; }
 
-    public FocusSceneModel()
+    public FocusSceneModel(AppSettingsManager settingsManager, IDbContextFactory<CoreContext> coreContextFactory)
     {
         CanStartFocus = this.WhenAnyValue(x => x.ActivityName)
             .Select(name => !string.IsNullOrWhiteSpace(name));
 
         StartFocusCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            // TODO this is also bad
+            // TODO this is bad
             var vm = new FocusTimerWindowViewModel(
+                coreContextFactory,
                 ActivityName,
                 ActivityDescription,
                 TimeSpan.FromMinutes(ExpectedMinutes));
 
-            // TODO this is bad
-            var window = new Views.FocusTimerWindow
+            // TODO this is also bad, ViewModel should not create view
+            var window = new Views.FocusTimerWindow(settingsManager)
             {
                 DataContext = vm
             };
 
-            TopWindows.FocusTimerWindow?.Close();
-            TopWindows.FocusTimerWindow = window;
+            App.Current.TopWindows.FocusTimerWindow?.Close();
+            App.Current.TopWindows.FocusTimerWindow = window;
             window.Show();
-            TopWindows.MainWindow?.WindowState = WindowState.Minimized;
+            App.Current.TopWindows.MainWindow?.WindowState = WindowState.Minimized;
         }, CanStartFocus);
     }
 }

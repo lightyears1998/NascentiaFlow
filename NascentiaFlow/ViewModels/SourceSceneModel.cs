@@ -17,25 +17,25 @@ public partial class SourceSceneModel : SceneModelBase
     [Reactive]
     private Source? _selectedSource;
 
-    private CoreContext _coreContext;
-    
+    private readonly CoreContext _coreContext;
+
     public IObservable<bool> AnyItemSelected { get; }
-    
+
     public Interaction<Source?, Source?> EditSourceInteraction { get; } = new();
-    
+
     public ReactiveCommand<Unit, Unit> AddSourceCommand { get; }
-    
+
     public ReactiveCommand<Unit, Unit> EditSourceCommand { get; }
-    
+
     public ReactiveCommand<Unit, Unit> UpdateLastCheckedPropertyCommand { get; }
 
     public ReactiveCommand<Unit, Unit> ClearLastCheckedPropertyCommand { get; }
 
     public ReactiveCommand<Unit, Unit> RemoveSelectedItemCommand { get; }
 
-    public SourceSceneModel()
+    public SourceSceneModel(CoreContext coreContext)
     {
-        _coreContext = new CoreContext();
+        _coreContext = coreContext;
 
         AnyItemSelected = this.WhenAnyValue(x => x.SelectedSource)
             .Select(x => x != null);
@@ -57,7 +57,7 @@ public partial class SourceSceneModel : SceneModelBase
             await EditSourceInteraction.Handle(SelectedSource);
             _coreContext.SaveChanges();
         }, AnyItemSelected);
-        
+
         UpdateLastCheckedPropertyCommand = ReactiveCommand.Create(() =>
         {
             if (SelectedSource == null) return;

@@ -3,15 +3,13 @@ using ReactiveUI.SourceGenerators;
 
 namespace NascentiaFlow.ViewModels;
 
-public partial class DateTimeInfoViewModel : ViewModelBase, IActivatableViewModel
+public partial class DateTimeInfoViewModel : ViewModelBase
 {
-    public ViewModelActivator Activator { get; } = new();
-
     [Reactive]
     private string _info = GetDateTimeInfo();
 
     private static string GetDateTimeInfo() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    
+
     public DateTimeInfoViewModel()
     {
         this.WhenActivated(disposables =>

@@ -7,13 +7,13 @@ public partial class MainWindowViewModel : ViewModelBase
     [Reactive] private MainViewModel _mainViewModel;
     [Reactive] private string _title = "NascentiaFlow";
 
-    public MainWindowViewModel(MainViewModel mainViewModel)
+    public MainWindowViewModel(MainViewModel mainViewModel, AppEnvironment environment)
     {
         _mainViewModel = mainViewModel;
 
-        if (Constants.DataDirNameOverwrite != string.Empty)
+        if (environment.DataDirNameOverwrite != string.Empty)
         {
-            Title += $" (using {Constants.DataDirNameOverwrite})";
+            Title += $" (using {environment.DataDirNameOverwrite})";
         }
     }
 }

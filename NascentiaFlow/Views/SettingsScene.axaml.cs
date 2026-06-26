@@ -34,13 +34,13 @@ public partial class SettingsScene : UserControl
 
     private void OpenAppDataButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        OpenFolderInExplorer(Constants.AppRoamingDataDir);
+        OpenFolderInExplorer(App.Current.Environment.AppRoamingDataDir);
         DisableButtonForShortInterval((Button)sender!);
     }
 
     private void OpenLocalDataButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        OpenFolderInExplorer(Constants.AppLocalDataDir);
+        OpenFolderInExplorer(App.Current.Environment.AppLocalDataDir);
         DisableButtonForShortInterval((Button)sender!);
     }
 }

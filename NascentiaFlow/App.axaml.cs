@@ -1,12 +1,9 @@
-using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using NascentiaFlow.Entities;
 using NascentiaFlow.ViewModels;
 using NascentiaFlow.Views;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NascentiaFlow.Utilities;
 
@@ -15,10 +12,16 @@ namespace NascentiaFlow;
 public class App : Application
 {
     private readonly ServiceProvider _provider;
+    private readonly AppEnvironment _environment = new();
+
+    private FileMutex? _appInstanceMutex;
+    private AppSettingsManager? _settingsManager;
 
     public App()
     {
         var collection = new ServiceCollection();
+        collection.AddSingleton(_environment);
+        collection.AddSingleton<AppSettingsManager>();
         collection.AddDbContexts();
         collection.AddServices();
         collection.AddViewModels();
@@ -28,9 +31,15 @@ public class App : Application
         _provider = collection.BuildServiceProvider();
     }
 
-    public new static App Current => (App)(Application.Current!);
+    public new static App Current => (App)Application.Current!;
 
-    public AppSettings Settings => AppSettingsManager.CurrentSettings;
+    public AppEnvironment Environment => _environment;
+
+    public AppSettings Settings => _settingsManager!.CurrentSettings;
+
+    public AppSettingsManager SettingsManager => _settingsManager!;
+
+    public AppTopWindows TopWindows { get; } = new();
 
     public override void Initialize()
     {
@@ -39,22 +48,19 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        InitConstants();
         EnsureLocalDataDirs();
 
         if (GetAppInstanceLock())
         {
-            RunApp();
+            Run();
         }
         else
         {
-            AbortAppStartup();
+            AbortStartup();
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
 
-    private void AbortAppStartup()
+    private void AbortStartup()
     {
         // TODO show some proper prompt to tell users the app is already running.
         throw new NotImplementedException();
@@ -64,20 +70,19 @@ public class App : Application
     {
         try
         {
-            Globals.AppInstanceMutex = new FileMutex(Constants.AppInstanceFileMutexPath);
+            _appInstanceMutex = new FileMutex(_environment.AppInstanceFileMutexPath);
         }
-        catch (Exception)
+        catch
         {
-            return false;
+            // ignored
         }
-        return true;
+
+        return _appInstanceMutex != null;
     }
 
-    private void RunApp()
+    private void Run()
     {
-        InitSettings();
-        EnsureRoamingDataDirs();
-        InitDatabases();
+        var settings = InitSettings();
 
         switch (ApplicationLifetime)
         {
@@ -86,8 +91,8 @@ public class App : Application
                 var mainWindow = _provider.GetRequiredService<MainWindow>();
                 mainWindow.DataContext = _provider.GetRequiredService<MainWindowViewModel>();
                 mainWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                mainWindow.Width = Settings.MainWindowWidth;
-                mainWindow.Height = Settings.MainWindowHeight;
+                mainWindow.Width = settings.MainWindowWidth;
+                mainWindow.Height = settings.MainWindowHeight;
                 desktop.MainWindow = mainWindow;
                 break;
 
@@ -100,81 +105,30 @@ public class App : Application
         }
     }
 
-    private void InitSettings()
+    private AppSettings InitSettings()
     {
-        AppSettingsManager.MakeSettingsAvailable();
-    }
-
-    // TODO move to background thread and don't block ui
-    private void InitDatabases()
-    {
-        using var coreContext = new CoreContext();
-        using var editionContext = new EditionContext();
-
-        try
-        {
-            Task.WaitAll(coreContext.Database.MigrateAsync(), editionContext.Database.MigrateAsync());
-        }
-        catch (AggregateException ex)
-        {
-            Console.Error.WriteLine(ex.ToString());
-            Console.Error.WriteLine($"Errored handling local database, Core={Constants.CoreDbPath} and Edition={Constants.EditionDbPath}");
-            throw;
-        }
-
-        Globals.DatabaseIsReady.Set();
-    }
-
-    private void InitConstants()
-    {
-        var dataDirName = Environment.GetEnvironmentVariable("NASCENTIA_FLOW_DATA_DIR_NAME");
-        if (dataDirName != null)
-        {
-            Constants.DataDirNameOverwrite = dataDirName;
-        }
-        else
-        {
-            dataDirName ??= "NascentiaFlow";
-        }
-
-        var roamingFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var appRoamingDataFolder = Path.Combine(roamingFolder, dataDirName);
-
-        var localFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var appLocalDataFolder = Path.Combine(localFolder, dataDirName);
-
-        Constants.AppRoamingDataDir = appRoamingDataFolder;
-        Constants.AppLocalDataDir = appLocalDataFolder;
-    }
-
-    private void EnsureDirs(string[] dirs)
-    {
-        foreach (var dir in dirs)
-        {
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-        }
+        _settingsManager = _provider.GetRequiredService<AppSettingsManager>();
+        _settingsManager!.MakeSettingsAvailable();
+        return _settingsManager.CurrentSettings;
     }
 
     private void EnsureLocalDataDirs()
     {
-        EnsureDirs([ Constants.AppLocalDataDir ]);
+        FileSystem.EnsureDirs([ _environment.AppLocalDataDir ]);
     }
 
-    private void EnsureRoamingDataDirs()
+    public void Shutdown()
     {
-        EnsureDirs([
-            Constants.AppRoamingDataDir, Constants.DbDir
-        ]);
-    }
+        switch (ApplicationLifetime)
+        {
+            case IClassicDesktopStyleApplicationLifetime desktop:
+                TopWindows.FocusTimerWindow?.Close();
+                TopWindows.MainWindow?.Close();
+                break;
 
-    // TODO refactor to work on IActivatable platform
-    public void CloseApp()
-    {
-        TopWindows.FocusTimerWindow?.Close();
-        TopWindows.MainWindow?.Close();
-        AppSettingsManager.SaveSettingsToFile();
+            // TODO refactor to work on IActivatable platform
+        }
+
+        _settingsManager?.SaveSettingsToFile();
     }
 }

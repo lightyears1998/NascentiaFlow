@@ -1,4 +1,6 @@
 using Avalonia.Interactivity;
+using Microsoft.EntityFrameworkCore.Internal;
+using NascentiaFlow.Entities;
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
 
@@ -18,7 +20,8 @@ public partial class HomeScene : ReactiveUserControl<HomeSceneModel>
 
     private void OpenFocusSceneButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        MainView.Current?.NavigateTo(new FocusSceneModel());
+        // TODO
+        // MainView.Current?.NavigateTo(new FocusSceneModel(App.Current.SettingsManager));
     }
 
     private void OpenCalendarButton_OnClick(object? sender, RoutedEventArgs e)
@@ -58,7 +61,8 @@ public partial class HomeScene : ReactiveUserControl<HomeSceneModel>
 
     private void OpenSourceSceneButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        MainView.Current?.NavigateTo(new SourceSceneModel());
+        // TODO
+        MainView.Current?.NavigateTo(new SourceSceneModel(new CoreContext(App.Current.Environment)));
     }
 
     private void OpenChronicleSceneButton_OnClick(object? sender, RoutedEventArgs e)
@@ -68,6 +72,7 @@ public partial class HomeScene : ReactiveUserControl<HomeSceneModel>
 
     private void OpenActivityRecordsSceneButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        MainView.Current?.NavigateTo(new ActivityRecordsSceneModel());
+        // TODO
+        MainView.Current?.NavigateTo(new ActivityRecordsSceneModel(new CoreContext(App.Current.Environment)));
     }
 }

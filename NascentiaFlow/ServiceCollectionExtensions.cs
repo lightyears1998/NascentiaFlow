@@ -12,9 +12,10 @@ internal static class ServiceCollectionExtensions
     {
         public void AddDbContexts()
         {
-
-            collection.AddTransient<CoreContext>();
-            collection.AddTransient<EditionContext>();
+            collection.AddDbContext<CoreContext>();
+            collection.AddDbContextFactory<CoreContext>();
+            collection.AddDbContext<EditionContext>();
+            collection.AddDbContextFactory<EditionContext>();
         }
 
         public void AddServices()

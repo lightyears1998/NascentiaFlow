@@ -1,4 +1,5 @@
 using System.Reactive.Subjects;
+using Microsoft.EntityFrameworkCore;
 using NascentiaFlow.Entities;
 using NodaTime;
 using ReactiveUI;
@@ -11,6 +12,8 @@ public partial class FocusTimerWindowViewModel : ViewModelBase
     private readonly TimeSpan _expectedDuration;
     private readonly string _activityDescription;
     private readonly System.Timers.Timer _timer;
+    private readonly IDbContextFactory<CoreContext> _coreContextFactory;
+
     private DateTime _startedAt;
     private TimeSpan _pausedElapsed;
 
@@ -32,11 +35,9 @@ public partial class FocusTimerWindowViewModel : ViewModelBase
 
     public Subject<Unit> Stopped { get; } = new();
 
-    public FocusTimerWindowViewModel(
-        string activityName,
-        string activityDescription,
-        TimeSpan expectedDuration)
+    public FocusTimerWindowViewModel(IDbContextFactory<CoreContext> coreContextFactory, string activityName, string activityDescription, TimeSpan expectedDuration)
     {
+        _coreContextFactory = coreContextFactory;
         _activityName = activityName;
         _activityDescription = activityDescription;
         _expectedDuration = expectedDuration;
@@ -108,8 +109,7 @@ public partial class FocusTimerWindowViewModel : ViewModelBase
             EndedAt = Instant.FromDateTimeUtc(DateTime.UtcNow)
         };
 
-        // TODO use repo
-        using var ctx = new CoreContext();
+        using var ctx = _coreContextFactory.CreateDbContext();
         ctx.Activities.Add(activity);
         ctx.SaveChanges();
     }

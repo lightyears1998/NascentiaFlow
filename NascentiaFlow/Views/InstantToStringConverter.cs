@@ -14,13 +14,13 @@ public class InstantToStringConverter : IValueConverter
             var systemZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
             var zonedDateTime = instant.InZone(systemZone);
 
-            var displayTimezone = AppSettingsManager.CurrentSettings.DisplayTimezoneInDatetimeString;
+            var displayTimezone = App.Current.Settings.DisplayTimezoneInDatetimeString;
             var patternString = "yyyy-MM-dd HH:mm:ss";
             if (displayTimezone)
             {
                 patternString += " o<+HH:mm>";
             }
-            
+
             var pattern = ZonedDateTimePattern.CreateWithInvariantCulture(patternString, DateTimeZoneProviders.Tzdb);
             return pattern.Format(zonedDateTime);
         }
