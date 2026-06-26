@@ -114,8 +114,6 @@ public partial class MainViewModel : ViewModelBase
 
         this.WhenActivated(d =>
         {
-            Console.WriteLine($"{Environment.CurrentManagedThreadId}");
-
             Observable.FromAsync(InitApp)
                 .SubscribeOn(RxSchedulers.TaskpoolScheduler)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
@@ -131,17 +129,8 @@ public partial class MainViewModel : ViewModelBase
 
     private async Task InitApp(CancellationToken ct)
     {
-        Console.WriteLine($"InitApp {Environment.CurrentManagedThreadId}");
-
-        await Task.Delay(0, ct).ConfigureAwait(false);
-
-        Console.WriteLine($"InitApp Delayed {Environment.CurrentManagedThreadId}");
-
         EnsureRoamingDataDirs();
-
         await InitDatabases(ct).ConfigureAwait(false);
-
-        Console.WriteLine($"InitApp InitDatabases {Environment.CurrentManagedThreadId}");
     }
 
     private void EnsureRoamingDataDirs()
