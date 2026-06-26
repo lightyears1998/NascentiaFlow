@@ -21,7 +21,6 @@
         <DataGrid Grid.Row="1"
                   Name="ActivityDataGrid"
                   ItemsSource="{Binding Activities}"
-                  SelectedItem="{Binding SelectedActivity}"
                   IsReadOnly="True"
                   CanUserSortColumns="True"
                   CanUserResizeColumns="True"

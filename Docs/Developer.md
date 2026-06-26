@@ -28,3 +28,7 @@ dotnet dev-certs https --trust
 ## 开发
 
 - 设置环境变量 `NASCENTIA_FLOW_DATA_DIR_NAME=NascentiaFlow Dev` 以便让 dev build 使用与 regular build 不同的数据目录，避免影响生产数据。 
+
+## 编码规范
+
+见 [Coding Convention](./CodingConvention.md)。

@@ -10,9 +10,15 @@ public partial class ActivityRecordsScene : ReactiveUserControl<ActivityRecordsS
     public ActivityRecordsScene()
     {
         InitializeComponent();
+        Console.WriteLine("The view is created!");
 
         this.WhenActivated(disposables =>
         {
+            // NB: It is required to bind the `SelectedItem` property here within the `WhenActivated` block,
+            // due to the way `SelectedItem` property is implemented in DataGrid.
+            // The app's navigation framework doesn't cache view. If we bind the property like other properties in AXAML,
+            // it won't work since there might be multiple views bound to view models at the same time.
+            // TODO navigation framework should cache the view to avoid this limitation.
             this.Bind(ViewModel, vm => vm.SelectedActivity, v => v.ActivityDataGrid.SelectedItem).DisposeWith(disposables);
 
             ViewModel!.EditActivityInteraction.RegisterHandler(DoEditActivityInteraction).DisposeWith(disposables);
