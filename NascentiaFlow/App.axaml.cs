@@ -33,6 +33,8 @@ public class App : Application
 
     public new static App Current => (App)Application.Current!;
 
+    public IServiceProvider ServiceProvider => _provider;
+
     public AppEnvironment Environment => _environment;
 
     public AppSettings Settings => _settingsManager!.CurrentSettings;

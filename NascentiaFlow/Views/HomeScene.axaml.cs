@@ -1,10 +1,13 @@
 using Avalonia.Interactivity;
+using Microsoft.Extensions.DependencyInjection;
 using NascentiaFlow.Entities;
 using ReactiveUI.Avalonia;
 using NascentiaFlow.ViewModels;
 
 namespace NascentiaFlow.Views;
 
+// FIXME Generally speaking it is a bad design for a view to create a ViewModel directly, however it stays as-is for the simplicity now.
+// TODO Navigation framework should be refactored to cache view.
 public partial class HomeScene : ReactiveUserControl<HomeSceneModel>
 {
     public HomeScene()
@@ -20,7 +23,8 @@ public partial class HomeScene : ReactiveUserControl<HomeSceneModel>
     private void OpenFocusSceneButton_OnClick(object? sender, RoutedEventArgs e)
     {
         // TODO
-        // MainView.Current?.NavigateTo(new FocusSceneModel(App.Current.SettingsManager));
+        MainView.Current?.NavigateTo(App.Current.ServiceProvider.GetRequiredService<FocusSceneModel>());
+        // MainView.Current?.NavigateTo(new FocusSceneModel(App.Current.SettingsManager, App.Current.ServiceProvider.GetRequiredService<IDbContextFactory<CoreContext>>()));
     }
 
     private void OpenCalendarButton_OnClick(object? sender, RoutedEventArgs e)

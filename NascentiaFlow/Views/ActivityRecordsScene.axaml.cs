@@ -10,7 +10,6 @@ public partial class ActivityRecordsScene : ReactiveUserControl<ActivityRecordsS
     public ActivityRecordsScene()
     {
         InitializeComponent();
-        Console.WriteLine("The view is created!");
 
         this.WhenActivated(disposables =>
         {
