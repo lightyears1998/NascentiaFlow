@@ -11,11 +11,11 @@ public partial class SourceScene : ReactiveUserControl<SourceSceneModel>
     {
         InitializeComponent();
 
-        this.WhenActivated(disposables =>
+        this.WhenActivated(d =>
         {
-            this.Bind(ViewModel, vm => vm.SelectedSource, v => v.SourceDataGrid.SelectedItem).DisposeWith(disposables);
-            
-            ViewModel!.EditSourceInteraction.RegisterHandler(DoEditSourceInteraction).DisposeWith(disposables);
+            this.Bind(ViewModel, vm => vm.SelectedSource, v => v.SourceDataGrid.SelectedItem).DisposeWith(d);
+
+            this.BindInteraction(ViewModel, x => x.EditSourceInteraction, DoEditSourceInteraction).DisposeWith(d);
         });
     }
 

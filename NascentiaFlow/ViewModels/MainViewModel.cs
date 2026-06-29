@@ -142,7 +142,8 @@ public class AppContentViewModel : ViewModelBase
 }
 
 public class AppDismissingViewModel : ViewModelBase
-{}
+{
+}
 
 public partial class MainViewModel : ActivatableViewModel
 {

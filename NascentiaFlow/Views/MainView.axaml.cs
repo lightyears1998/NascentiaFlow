@@ -10,10 +10,10 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
     {
         InitializeComponent();
 
-        this.WhenActivated(disposables =>
+        this.WhenActivated(d =>
         {
             Current = this;
-            Disposable.Create(() => { Current = null; }).DisposeWith(disposables);
+            Disposable.Create(() => { Current = null; }).DisposeWith(d);
         });
     }
 

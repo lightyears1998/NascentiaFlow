@@ -20,7 +20,7 @@ public partial class ActivityRecordsScene : ReactiveUserControl<ActivityRecordsS
             // TODO navigation framework should cache the view to avoid this limitation.
             this.Bind(ViewModel, vm => vm.SelectedActivity, v => v.ActivityDataGrid.SelectedItem).DisposeWith(disposables);
 
-            ViewModel!.EditActivityInteraction.RegisterHandler(DoEditActivityInteraction).DisposeWith(disposables);
+            this.BindInteraction(ViewModel, x => x.EditActivityInteraction, DoEditActivityInteraction).DisposeWith(disposables);
         });
     }
 
