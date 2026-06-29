@@ -25,17 +25,13 @@ public partial class FocusTimerWindow : ReactiveWindow<FocusTimerWindowViewModel
         {
             Current = this;
 
-            this.WhenAnyValue(x => x.DataContext)
-                .WhereNotNull()
-                .OfType<FocusTimerWindowViewModel>()
-                .Subscribe(vm =>
+            this.WhenAnyValue(x => x.ViewModel!)
+                .SelectMany(vm => vm.Stopped)
+                .Subscribe(_ =>
                 {
-                    vm.Stopped.Subscribe(_ =>
-                    {
-                        App.Current.TopWindows.FocusTimerWindow = null;
-                        Close();
-                        App.Current.TopWindows.MainWindow?.WindowState = WindowState.Normal;
-                    });
+                    App.Current.TopWindows.FocusTimerWindow = null;
+                    Close();
+                    App.Current.TopWindows.MainWindow?.WindowState = WindowState.Normal;
                 })
                 .DisposeWith(disposables);
 
